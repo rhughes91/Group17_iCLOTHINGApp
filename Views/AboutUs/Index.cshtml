@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Group17_iCLOTHINGApp.Models.AboutUs>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.shippingPolicy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.returnPolicy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.contactInfo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.businessDescription)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Administrator.adminName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.shippingPolicy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.returnPolicy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.contactInfo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.businessDescription)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Administrator.adminName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.companyAddress }) |
+            @Html.ActionLink("Details", "Details", new { id=item.companyAddress }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.companyAddress })
+        </td>
+    </tr>
+}
+
+</table>

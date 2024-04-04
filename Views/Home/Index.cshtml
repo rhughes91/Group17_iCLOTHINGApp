@@ -1,0 +1,26 @@
+﻿@{
+	ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+	<h1>iCLOTHING Store Page</h1>
+	<p class="lead">Find clothing of all types delivered right to your doorstep.</p>
+
+
+</div>
+
+<div class="row">
+	<div class="col-md-4">
+		<h2>@Html.ActionLink("Browse", "Index", "Departments")</h2>
+		<p>Browse iCLOTHING's Stocked Items.</p>
+	</div>
+
+	<div class="col-md-4">
+		<h2>@Html.ActionLink("Login", "Index", "UserPasswords")</h2>
+		<p>Log In to the iCLOTHING Sytem.</p>
+	</div>
+	<div class="col-md-4">
+		<h2>@Html.ActionLink("About", "Index", "Home")</h2>
+		<p>Learn More About iCLOTHING.</p>
+	</div>
+</div>
