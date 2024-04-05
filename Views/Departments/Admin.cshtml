@@ -1,39 +1,65 @@
-﻿@model Group17_iCLOTHINGApp.Controllers.DepartmentsCont>
+﻿@model Group17_iCLOTHINGApp.Controllers.DepartmentsController.CatalogInformation
 
 @{
-    ViewBag.Title = "Admin";
+	ViewBag.Title = "Admin";
 }
 
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+	@Html.ActionLink("Create New", "Create")
 </p>
+
+<hr />
+<div class="row">
+	@foreach (var item in Model.departments)
+	{
+		<div class="col-md-3">
+			<h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
+
+			@{var categories = from cat in Model.categories where cat.departmentID == item.departmentID select cat;}
+
+			@foreach (var category in categories)
+			{
+				<a href=@Url.Action("Filter", "Departments", new {id = category.categoryID })>@Html.DisplayFor(modelCategory => category.categoryName)</a><br />
+			}
+
+		</div>
+	}
+</div>
+<hr />
+
 <table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.productName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.productDescription)
-        </th>
-        <th></th>
-    </tr>
+	<tr>
+		<th>
+			<a href=@Url.Action("Index", "Departments", new {sort = 0})>@Html.DisplayName("Product Name")</a>
+		</th>
+		<th>
+			<a href=@Url.Action("Index", "Departments", new {sort = 1})>@Html.DisplayName("Brand")</a>
+		</th>
+		<th>
+			@Html.DisplayName("Description")
+		</th>
+		<th></th>
+	</tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.productName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.productDescription)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.productID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.productID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.productID })
-        </td>
-    </tr>
-}
-
+	@foreach (var item in Model.products)
+	{
+		var brandName = (from brand in Model.brands where item.brandID == brand.brandID select brand.brandName);
+		<tr>
+			<td>
+				@Html.DisplayFor(modelItem => item.productName)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => brandName)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.productDescription)
+			</td>
+			<td>
+				@Html.ActionLink("Edit", "Edit", new { id = item.productID }) |
+				@Html.ActionLink("Delete", "Delete", new { id = item.productID })
+			</td>
+		</tr>
+	}
 </table>

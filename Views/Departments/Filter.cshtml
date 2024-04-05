@@ -5,6 +5,7 @@
 }
 
 <hr />
+<a href=@Url.Action("Index", "Departments", new {sort = 0})>@Html.DisplayName("Return To Catalog")</a>
 @{var category = Model.categories[0]; Model.categories.RemoveAt(0);}
 
 <div class="row">

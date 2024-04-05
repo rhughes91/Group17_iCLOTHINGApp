@@ -76,10 +76,12 @@ namespace Group17_iCLOTHINGApp.Controllers
 
                 db.OrderStatus.Add(orderStatus);
 
-                /*foreach (var item in db.ShoppingCart)
+                foreach (var item in db.ShoppingCart)
                 {
-                    db.ShoppingCart.Remove(item);
-                }*/
+                    string productID = item.productID;
+                    db.Product.Find(productID).productQty -= item.productQuantity;
+                    //db.ShoppingCart.Remove(item);
+                }
 
                 db.SaveChanges();
 

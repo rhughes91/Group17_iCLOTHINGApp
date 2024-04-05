@@ -14,14 +14,25 @@ namespace Group17_iCLOTHINGApp.Controllers
     {
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
-        // GET: UserComments
+        private static readonly Random random = new Random();
+        public int GenerateUniqueQueryID()
+        {
+            int id = random.Next(10000, 100000);
+
+            // Generate a random number within the range of 10000 to 99999
+            while (db.ShoppingCart.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            return id;
+        }
+
+
+        // GET: UserQueries
         public ActionResult Index()
         {
             var userComment = db.UserComment.Include(u => u.Customer);
             return View(userComment.ToList());
         }
 
-        // GET: UserComments/Details/5
+        // GET: UserQueries/Details/5
         public ActionResult Details(string id)
         {
             if (id == null)
@@ -36,14 +47,14 @@ namespace Group17_iCLOTHINGApp.Controllers
             return View(userComment);
         }
 
-        // GET: UserComments/Create
+        // GET: UserQueries/Create
         public ActionResult Create()
         {
-            ViewBag.userID = new SelectList(db.Customer, "customerID", "customerName");
+            ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName");
             return View();
         }
 
-        // POST: UserComments/Create
+        // POST: UserQueries/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -52,16 +63,20 @@ namespace Group17_iCLOTHINGApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                userComment.userID = UserPasswordsController.CurrentUser();
+                userComment.commentNo = GenerateUniqueQueryID().ToString();
+                userComment.commentDate = DateTime.Now;
+
                 db.UserComment.Add(userComment);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.userID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
+            ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
             return View(userComment);
         }
 
-        // GET: UserComments/Edit/5
+        // GET: UserQueries/Edit/5
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -73,11 +88,11 @@ namespace Group17_iCLOTHINGApp.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.userID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
+            ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
             return View(userComment);
         }
 
-        // POST: UserComments/Edit/5
+        // POST: UserQueries/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -90,11 +105,11 @@ namespace Group17_iCLOTHINGApp.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.userID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
+            ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
             return View(userComment);
         }
 
-        // GET: UserComments/Delete/5
+        // GET: UserQueries/Delete/5
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -109,7 +124,7 @@ namespace Group17_iCLOTHINGApp.Controllers
             return View(userComment);
         }
 
-        // POST: UserComments/Delete/5
+        // POST: UserQueries/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)

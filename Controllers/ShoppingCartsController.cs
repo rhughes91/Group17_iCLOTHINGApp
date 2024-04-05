@@ -29,10 +29,6 @@ namespace Group17_iCLOTHINGApp.Controllers
         // GET: ShoppingCarts
         public ActionResult Index()
         {
-            if(!UserPasswordsController.Verified())
-            {
-                return View("~/Views/Home/Index.cshtml");
-            }
             var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);
             return View(shoppingCart.ToList());
         }
@@ -73,9 +69,18 @@ namespace Group17_iCLOTHINGApp.Controllers
                 shoppingCart.customerID = (from cus in db.Customer where cus.userID == userID select cus.customerID).First();
                 shoppingCart.productPrice = db.Product.Find(shoppingCart.productID).productPrice;
                 shoppingCart.cartID = GenerateUniqueCartID().ToString();
-                db.ShoppingCart.Add(shoppingCart);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+
+                int productQuantity = shoppingCart.productQuantity;
+                if (db.Product.Find(shoppingCart.productID).productQty < productQuantity)
+                {
+                    ViewBag.ErrorMessage = "Not enough of this item in stock";//Get this error message working ModelState.AddModelError("ErrorMessageKey", "Error message goes here");
+                }
+                else
+                {
+                    db.ShoppingCart.Add(shoppingCart);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
 
             ViewBag.customerID = new SelectList(db.Customer, "customerID", "customerName", shoppingCart.customerID);
@@ -109,9 +114,17 @@ namespace Group17_iCLOTHINGApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(shoppingCart).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                int productQuantity = shoppingCart.productQuantity;
+                if (db.Product.Find(shoppingCart.productID).productQty < productQuantity)
+                {
+                    ViewBag.ErrorMessage = "Not enough of this item in stock";
+                }
+                else
+                {
+                    db.Entry(shoppingCart).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             ViewBag.customerID = new SelectList(db.Customer, "customerID", "customerName", shoppingCart.customerID);
             ViewBag.productID = new SelectList(db.Product, "productID", "productName", shoppingCart.productID);

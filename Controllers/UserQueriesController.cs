@@ -28,11 +28,6 @@ namespace Group17_iCLOTHINGApp.Controllers
         // GET: UserQueries
         public ActionResult Index()
         {
-            if (!UserPasswordsController.Verified())
-            {
-                return View("~/Views/Home/Index.cshtml");
-            }
-
             var userQuery = db.UserQuery.Include(u => u.Customer);
             return View(userQuery.ToList());
         }
@@ -55,10 +50,6 @@ namespace Group17_iCLOTHINGApp.Controllers
         // GET: UserQueries/Create
         public ActionResult Create()
         {
-            if(!UserPasswordsController.Verified())
-            {
-                return View("~/Views/Home/Index.cshtml");
-            }
             ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName");
             return View();
         }
@@ -76,8 +67,6 @@ namespace Group17_iCLOTHINGApp.Controllers
                 userQuery.searchID = (from cus in db.Customer where cus.userID == userID select cus.customerID).First();
                 userQuery.queryNo = GenerateUniqueQueryID().ToString();
                 userQuery.queryDate = DateTime.Now;
-
-
 
                 db.UserQuery.Add(userQuery);
                 db.SaveChanges();

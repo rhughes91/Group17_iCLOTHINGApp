@@ -71,7 +71,7 @@ namespace Group17_iCLOTHINGApp.Controllers
 
             if (UserPasswordsController.CurrentUser() == "admin")
             {
-                return RedirectToAction("Admin");
+                return RedirectToAction("Admin", new {srt = sort});
             }
             return View(new CatalogInformation(db.Department.ToList(), db.Category.ToList(), sortedProducts, db.Brand.ToList()));
         }
@@ -100,13 +100,17 @@ namespace Group17_iCLOTHINGApp.Controllers
             ));
         }
 
-        public ActionResult Admin()
+        public ActionResult Admin(int? srt)
         {
+            if (srt == null)
+                srt = -1;
+
+            List<Product> sortedProducts = SortProducts(db.Product.ToList(), srt);
             if (UserPasswordsController.CurrentUser() != "admin")
             {
                 return RedirectToAction("Index");
             }
-            return View(db.Product.ToList());
+            return View(new CatalogInformation(db.Department.ToList(), db.Category.ToList(), sortedProducts, db.Brand.ToList()));
         }
 
         // GET: Departments/Details/5
@@ -135,7 +139,7 @@ namespace Group17_iCLOTHINGApp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "productID,productName,productDescription")] Product product)
+        public ActionResult Create([Bind(Include = "productID,productName,productDescription,productPrice,productQty,categoryID,brandID")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -167,7 +171,7 @@ namespace Group17_iCLOTHINGApp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "productID,productName,productDescription")] Product product)
+        public ActionResult Edit([Bind(Include = "productID,productName,productDescription,productPrice,productQty,categoryID,brandID")] Product product)
         {
             if (ModelState.IsValid)
             {
