@@ -14,9 +14,25 @@ namespace Group17_iCLOTHINGApp.Controllers
     {
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
+        private static readonly Random random = new Random();
+        public int GenerateUniqueQueryID()
+        {
+            int id = random.Next(10000, 100000);
+
+            // Generate a random number within the range of 10000 to 99999
+            while (db.ShoppingCart.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            return id;
+        }
+
+
         // GET: UserQueries
         public ActionResult Index()
         {
+            if (!UserPasswordsController.Verified())
+            {
+                return View("~/Views/Home/Index.cshtml");
+            }
+
             var userQuery = db.UserQuery.Include(u => u.Customer);
             return View(userQuery.ToList());
         }
@@ -39,6 +55,10 @@ namespace Group17_iCLOTHINGApp.Controllers
         // GET: UserQueries/Create
         public ActionResult Create()
         {
+            if(!UserPasswordsController.Verified())
+            {
+                return View("~/Views/Home/Index.cshtml");
+            }
             ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName");
             return View();
         }
@@ -52,6 +72,13 @@ namespace Group17_iCLOTHINGApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                String userID = UserPasswordsController.CurrentUser();
+                userQuery.searchID = (from cus in db.Customer where cus.userID == userID select cus.customerID).First();
+                userQuery.queryNo = GenerateUniqueQueryID().ToString();
+                userQuery.queryDate = DateTime.Now;
+
+
+
                 db.UserQuery.Add(userQuery);
                 db.SaveChanges();
                 return RedirectToAction("Index");

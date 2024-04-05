@@ -131,6 +131,7 @@
     <Compile Include="Controllers\AboutUsController.cs" />
     <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrderStatusController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\ShoppingCartsController.cs" />
     <Compile Include="Controllers\UserCommentsController.cs" />
@@ -255,11 +256,6 @@
     <Content Include="Views\Departments\Details.cshtml" />
     <Content Include="Views\Departments\Edit.cshtml" />
     <Content Include="Views\Departments\Index.cshtml" />
-    <Content Include="Views\AboutUs\Create.cshtml" />
-    <Content Include="Views\AboutUs\Delete.cshtml" />
-    <Content Include="Views\AboutUs\Details.cshtml" />
-    <Content Include="Views\AboutUs\Edit.cshtml" />
-    <Content Include="Views\AboutUs\Index.cshtml" />
     <Content Include="Views\UserQueries\Create.cshtml" />
     <Content Include="Views\UserQueries\Delete.cshtml" />
     <Content Include="Views\UserQueries\Details.cshtml" />
@@ -282,6 +278,18 @@
     <Content Include="Views\ShoppingCarts\Index.cshtml" />
     <Content Include="Views\UserPasswords\Register.cshtml" />
     <Content Include="Views\Departments\Admin.cshtml" />
+    <Content Include="Views\Departments\Filter.cshtml" />
+    <Content Include="Views\OrderStatus\Create.cshtml" />
+    <Content Include="Views\OrderStatus\Delete.cshtml" />
+    <Content Include="Views\OrderStatus\Details.cshtml" />
+    <Content Include="Views\OrderStatus\Edit.cshtml" />
+    <Content Include="Views\OrderStatus\Index.cshtml" />
+    <Content Include="Views\AboutUs\Create.cshtml" />
+    <Content Include="Views\AboutUs\Delete.cshtml" />
+    <Content Include="Views\AboutUs\Details.cshtml" />
+    <Content Include="Views\AboutUs\Edit.cshtml" />
+    <Content Include="Views\AboutUs\Index.cshtml" />
+    <Content Include="Views\ShoppingCarts\Checkout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -5,36 +5,32 @@
 }
 
 <hr />
+@{var category = Model.categories[0]; Model.categories.RemoveAt(0);}
+
 <div class="row">
 	@foreach (var item in Model.departments)
 	{
-	<div class="col-md-3">
-		<h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
+		<div class="col-md-3">
+			<h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
 
-		@{var categories = from cat in Model.categories where cat.departmentID == item.departmentID select cat;}
+			<h5>@Html.DisplayFor(catDisplay => category.categoryName)</h5>
 
-		@foreach (var category in categories)
-		{
-			<a href=@Url.Action("Filter", "Departments", new {id = category.categoryID })>@Html.DisplayFor(modelCategory => category.categoryName)</a><br />
-		}
-
-	</div>
+			@foreach (var cat in Model.categories)
+			{
+				<a href=@Url.Action("Filter", "Departments", new {id = cat.categoryID })>@Html.DisplayFor(modelCategory => cat.categoryName)</a><br />
+			}
+		</div>
 	}
 </div>
-<hr/>
-
-
-<div class="form-outline" data-mdb-input-init>
-	<input type="search" id="form1" class="form-control" placeholder="Type query" aria-label="Search" />
-</div>
+<hr />
 
 <table class="table">
 	<tr>
 		<th>
-			<a href=@Url.Action("Index", "Departments", new {sort = 0})>@Html.DisplayName("Product Name")</a>
+			<a href=@Url.Action("Filter", "Departments", new {id = category.categoryID, sort = 0})>@Html.DisplayName("Product Name")</a>
 		</th>
 		<th>
-			<a href=@Url.Action("Index", "Departments", new {sort = 1})>@Html.DisplayName("Brand")</a>
+			<a href=@Url.Action("Filter", "Departments", new {id = category.categoryID, sort = 1})>@Html.DisplayName("Brand")</a>
 		</th>
 		<th>
 			@Html.DisplayName("Description")

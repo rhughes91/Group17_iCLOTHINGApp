@@ -14,9 +14,25 @@ namespace Group17_iCLOTHINGApp.Controllers
     {
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
+        private static readonly Random random = new Random();
+        public int GenerateUniqueCartID()
+        {
+            int id = random.Next(10000, 100000);
+
+            // Generate a random number within the range of 10000 to 99999
+            while (db.ShoppingCart.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            return id;
+        }
+
+
+
         // GET: ShoppingCarts
         public ActionResult Index()
         {
+            if(!UserPasswordsController.Verified())
+            {
+                return View("~/Views/Home/Index.cshtml");
+            }
             var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);
             return View(shoppingCart.ToList());
         }
@@ -53,6 +69,10 @@ namespace Group17_iCLOTHINGApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                String userID = UserPasswordsController.CurrentUser();
+                shoppingCart.customerID = (from cus in db.Customer where cus.userID == userID select cus.customerID).First();
+                shoppingCart.productPrice = db.Product.Find(shoppingCart.productID).productPrice;
+                shoppingCart.cartID = GenerateUniqueCartID().ToString();
                 db.ShoppingCart.Add(shoppingCart);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -124,6 +144,11 @@ namespace Group17_iCLOTHINGApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Checkout()
+        {
+            return View();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -132,5 +157,8 @@ namespace Group17_iCLOTHINGApp.Controllers
             }
             base.Dispose(disposing);
         }
+
+
+
     }
 }

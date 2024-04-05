@@ -12,16 +12,92 @@ namespace Group17_iCLOTHINGApp.Controllers
 {
     public class DepartmentsController : Controller
     {
+        private static int? lastSort = -1;
+
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
-        // GET: Departments
-        public ActionResult Index()
+        public class CatalogInformation
         {
-            if(UserPasswordsController.CurrentUser() == "admin")
+            public List<Department> departments { get; set; }
+            public List<Category> categories { get; set; }
+            public List<Product> products { get; set; }
+
+            public List<Brand> brands { get; set; }            
+
+            public CatalogInformation(List<Department> deps, List<Category> cats, List<Product> prods, List<Brand> brds)
+            {
+                departments = deps;
+                categories = cats;
+                products = prods;
+                brands = brds;
+            }
+        }
+
+        private List<Product> SortProducts(List<Product> products, int? sort)
+        {
+            List<Product> sortedProducts = new List<Product>();
+            switch (sort)
+            {
+                case 1:
+                    sortedProducts = (from prod in products
+                                      join brand in db.Brand on prod.brandID equals brand.brandID
+                                      orderby brand.brandName
+                                      select prod).ToList();
+                    break;
+                default:
+                    sortedProducts = products.OrderBy(o => o.productName).ToList();
+                    sort = 0;
+                    break;
+            }
+            if (lastSort == sort)
+            {
+                sortedProducts.Reverse();
+                lastSort = -1;
+            }
+            else
+            {
+                lastSort = sort;
+            }
+            return sortedProducts;
+        }
+
+        // GET: Departments
+        public ActionResult Index(int? sort)
+        {
+            if (sort == null)
+                sort = 0;
+
+            List<Product> sortedProducts = SortProducts(db.Product.ToList(), sort);            
+
+            if (UserPasswordsController.CurrentUser() == "admin")
             {
                 return RedirectToAction("Admin");
             }
-            return View(db.Product.ToList());
+            return View(new CatalogInformation(db.Department.ToList(), db.Category.ToList(), sortedProducts, db.Brand.ToList()));
+        }
+
+        public ActionResult Filter(String id, int? sort)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index", sort);
+            }
+
+            if (sort == null)
+                sort = -1;
+
+            Category category = (from categ in db.Category where categ.categoryID == id select categ).FirstOrDefault();
+            List<Category> cats = (from cat in db.Category where cat.parentID == id select cat).ToList();
+            cats.Insert(0, category);
+
+            List<String> catIDs = (from c in cats select c.categoryID).ToList();
+
+            return View(new CatalogInformation(
+                (from dep in db.Department where dep.departmentID == category.departmentID select dep).ToList(),
+                cats,
+                SortProducts((from prod in db.Product where catIDs.Contains(prod.categoryID) select prod).ToList(), sort),
+                db.Brand.ToList()
+            ));
         }
 
         public ActionResult Admin()

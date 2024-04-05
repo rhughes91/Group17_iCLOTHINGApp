@@ -18,17 +18,17 @@
                 </button>
                 @Html.ActionLink("iCLOTHING Store", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
-            <div class="navbar-collapse collapse">
+			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li>@Html.ActionLink("Home", "Index", "Home")</li>
 					<li>@Html.ActionLink("About", "Index", "Home")</li>
 					<li>@Html.ActionLink("Login", "Index", "UserPasswords")</li>
 					<li>@Html.ActionLink("Browse", "Index", "Departments")</li>
-					<li>@Html.ActionLink("Check Out", "Index", "ShoppingCarts")</li>
-
-
 				</ul>
-            </div>
+				<ul class="nav navbar-nav navbar-right">
+					<li>@Html.ActionLink("View Cart", "Index", "ShoppingCarts", new { area = "" }, new { @class = "nav-item", style = "display: inline-block;" })</li>
+				</ul>
+			</div>
         </div>
     </div>
     <div class="container body-content">
