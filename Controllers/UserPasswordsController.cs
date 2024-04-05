@@ -12,80 +12,122 @@ namespace Group17_iCLOTHINGApp.Controllers
 {
     public class UserPasswordsController : Controller
     {
+        private static String currentUser = null;
+
+        public static bool Verified()
+        {
+            return currentUser != null && currentUser != "";
+        }
+
+        public static String CurrentUser()
+        {
+            return currentUser;
+        }
+
+
+        public class Account
+        {
+            public String password { get; set; }
+            public Customer customer { get; set; }
+
+            public bool valid()
+            {
+                return customer.customerID != "" && customer.customerName != "" && customer.userID != "" && customer.customerGender != "" && password != "";
+            }
+        }
+
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
         // GET: UserPasswords
         public ActionResult Index()
         {
+            if(Verified())
+            {
+                return View("~/Views/Home/Index.cshtml");
+            }
             return View();
         }
 
-        // GET: UserPasswords/Details/5
-        public ActionResult Details(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserPassword userPassword = db.UserPassword.Find(id);
-            if (userPassword == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userPassword);
-        }
-
-        // POST: UserPasswords/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(String password, [Bind(Include = "customerID,customerName,customerShippingAddress,customerDOB,customerGender,customerBillingAddress,userID")] Customer customer)
+        public ActionResult Index(UserPassword result)
         {
-            if (ModelState.IsValid)
+            var query = from user in db.UserPassword where user.userID == result.userID && user.userEncryptedPassword == result.userEncryptedPassword select user;
+            if (query.Any())
             {
-                // db.UserPassword.Add(userPassword);
-                // db.SaveChanges();
-                // return RedirectToAction("Index");
+                currentUser = result.userID;
+                return View("~/Views/Home/Index.cshtml");
             }
 
-            return View(customer);
+            return View(result);
         }
 
-        // GET: UserPasswords/Edit/5
-        public ActionResult Edit(string id)
+        public ActionResult Register()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserPassword userPassword = db.UserPassword.Find(id);
-            if (userPassword == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userPassword);
+            return View();
         }
 
-        // POST: UserPasswords/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "userID,userAccountName,userEncryptedPassword,passwordExpiryTime,userAccountExpirtDate")] UserPassword userPassword)
+        public ActionResult Register(Account result)
         {
-            if (ModelState.IsValid)
+            var query = from user in db.UserPassword where user.userID == result.customer.userID select user;
+            if(result.valid() && query.Any())
             {
-                db.Entry(userPassword).State = EntityState.Modified;
+                System.Diagnostics.Debug.WriteLine("Username has already been taken");
+                return View(result);
+            }
+
+            UserPassword up = new UserPassword();
+            up.userID = result.customer.userID;
+            up.userAccountName = result.customer.userID;
+            up.userEncryptedPassword = result.password;
+            up.passwordExpiryTime = 31;
+            up.userAccountExpirtDate = DateTime.Now.AddDays(up.passwordExpiryTime);
+
+            Customer cust = result.customer;
+            cust.customerBillingAddress = "";
+            cust.customerShippingAddress = "";
+            switch(cust.customerGender.ToLower())
+            {
+                case "m":
+                case "man":
+                case "male":
+                    cust.customerGender = "M";
+                break;
+                case "f":
+                case "woman":
+                case "female":
+                    cust.customerGender = "F";
+                break;
+                default:
+                    cust.customerGender = "X";
+                break;
+            }
+
+            db.UserPassword.Add(up);
+            db.Customer.Add(cust);
+            try
+            {
                 db.SaveChanges();
-                return RedirectToAction("Index");
             }
-            return View(userPassword);
-        }
+            catch(System.Data.Entity.Validation.DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    System.Diagnostics.Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        System.Diagnostics.Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+            }
 
-        public ActionResult VerifyPassword()
-        {
-            return View();
+            currentUser = cust.userID;
+
+            return View("~/Views/Home/Index.cshtml");
         }
 
         protected override void Dispose(bool disposing)

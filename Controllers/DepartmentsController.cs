@@ -17,7 +17,20 @@ namespace Group17_iCLOTHINGApp.Controllers
         // GET: Departments
         public ActionResult Index()
         {
-            return View(db.Department.ToList());
+            if(UserPasswordsController.CurrentUser() == "admin")
+            {
+                return RedirectToAction("Admin");
+            }
+            return View(db.Product.ToList());
+        }
+
+        public ActionResult Admin()
+        {
+            if (UserPasswordsController.CurrentUser() != "admin")
+            {
+                return RedirectToAction("Index");
+            }
+            return View(db.Product.ToList());
         }
 
         // GET: Departments/Details/5
@@ -27,12 +40,12 @@ namespace Group17_iCLOTHINGApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Department.Find(id);
-            if (department == null)
+            Product product = db.Product.Find(id);
+            if (product == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(product);
         }
 
         // GET: Departments/Create
@@ -46,16 +59,16 @@ namespace Group17_iCLOTHINGApp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "departmentID,departmentName,departmentDescription")] Department department)
+        public ActionResult Create([Bind(Include = "productID,productName,productDescription")] Product product)
         {
             if (ModelState.IsValid)
             {
-                db.Department.Add(department);
+                db.Product.Add(product);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(department);
+            return View(product);
         }
 
         // GET: Departments/Edit/5
@@ -65,12 +78,12 @@ namespace Group17_iCLOTHINGApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Department.Find(id);
-            if (department == null)
+            Product product = db.Product.Find(id);
+            if (product == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(product);
         }
 
         // POST: Departments/Edit/5
@@ -78,15 +91,15 @@ namespace Group17_iCLOTHINGApp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "departmentID,departmentName,departmentDescription")] Department department)
+        public ActionResult Edit([Bind(Include = "productID,productName,productDescription")] Product product)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(department).State = EntityState.Modified;
+                db.Entry(product).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(department);
+            return View(product);
         }
 
         // GET: Departments/Delete/5
@@ -96,12 +109,12 @@ namespace Group17_iCLOTHINGApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Department.Find(id);
-            if (department == null)
+            Product product = db.Product.Find(id);
+            if (product == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(product);
         }
 
         // POST: Departments/Delete/5
@@ -109,8 +122,8 @@ namespace Group17_iCLOTHINGApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Department department = db.Department.Find(id);
-            db.Department.Remove(department);
+            Product product = db.Product.Find(id);
+            db.Product.Remove(product);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

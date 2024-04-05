@@ -26,7 +26,7 @@ namespace Group17_iCLOTHINGApp.Models
         public string customerID { get; set; }
         public string customerName { get; set; }
         public string customerShippingAddress { get; set; }
-        public Nullable<System.DateTime> customerDOB { get; set; }
+        public System.DateTime customerDOB { get; set; }
         public string customerGender { get; set; }
         public string customerBillingAddress { get; set; }
         public string userID { get; set; }

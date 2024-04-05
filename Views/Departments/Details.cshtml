@@ -1,4 +1,4 @@
-﻿@model Group17_iCLOTHINGApp.Models.Department
+﻿@model Group17_iCLOTHINGApp.Models.Product
 
 @{
     ViewBag.Title = "Details";
@@ -7,28 +7,28 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Department</h4>
+    <h4>Product</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.departmentName)
+            @Html.DisplayNameFor(model => model.productName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.departmentName)
+            @Html.DisplayFor(model => model.productName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.departmentDescription)
+            @Html.DisplayNameFor(model => model.productDescription)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.departmentDescription)
+            @Html.DisplayFor(model => model.productDescription)
         </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.departmentID }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.productID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

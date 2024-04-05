@@ -50,10 +50,10 @@
           </Key>
           <Property Name="customerID" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="customerName" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="customerShippingAddress" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="customerDOB" Type="date" />
-          <Property Name="customerGender" Type="char" MaxLength="1" />
-          <Property Name="customerBillingAddress" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="customerShippingAddress" Type="varchar" MaxLength="30" />
+          <Property Name="customerDOB" Type="date" Nullable="false" />
+          <Property Name="customerGender" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="customerBillingAddress" Type="varchar" MaxLength="30" />
           <Property Name="userID" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="Department">
@@ -474,15 +474,15 @@
           </Key>
           <Property Name="customerID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="customerName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="customerShippingAddress" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="customerDOB" Type="DateTime" Precision="0" />
-          <Property Name="customerGender" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="customerBillingAddress" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="customerShippingAddress" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="customerDOB" Type="DateTime" Precision="0" Nullable="false" />
+          <Property Name="customerGender" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="customerBillingAddress" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Email" Relationship="Self.FK_Customer_Email" FromRole="Customer" ToRole="Email" />
           <NavigationProperty Name="ShoppingCart" Relationship="Self.FK_Customer_ShoppingCart" FromRole="Customer" ToRole="ShoppingCart" />
           <NavigationProperty Name="UserComment" Relationship="Self.FK_Customer_UserComment" FromRole="Customer" ToRole="UserComment" />
           <NavigationProperty Name="UserQuery" Relationship="Self.FK_Customer_UserQuery" FromRole="Customer" ToRole="UserQuery" />
-          <Property Name="userID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="userID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="UserPassword" Relationship="Group17_iCLOTHINGDBModel.FK_Customer_UserPassword" FromRole="Customer" ToRole="UserPassword" />
         </EntityType>
         <EntityType Name="Department">

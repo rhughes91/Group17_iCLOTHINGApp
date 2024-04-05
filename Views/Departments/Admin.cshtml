@@ -1,18 +1,21 @@
 ﻿@model IEnumerable<Group17_iCLOTHINGApp.Models.Product>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Admin";
 }
 
 <h2>Index</h2>
 
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayName("Product Name")
+            @Html.DisplayNameFor(model => model.productName)
         </th>
         <th>
-            @Html.DisplayName("Description")
+            @Html.DisplayNameFor(model => model.productDescription)
         </th>
         <th></th>
     </tr>
@@ -26,7 +29,9 @@
             @Html.DisplayFor(modelItem => item.productDescription)
         </td>
         <td>
-            @Html.ActionLink("Details", "Details", new { id=item.productID })
+            @Html.ActionLink("Edit", "Edit", new { id=item.productID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.productID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.productID })
         </td>
     </tr>
 }
