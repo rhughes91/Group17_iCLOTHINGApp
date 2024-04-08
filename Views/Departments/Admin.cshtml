@@ -6,9 +6,8 @@
 
 <hr />
 <p>
-    @Html.ActionLink("Add Category", "CreateCategory")
+    @Html.ActionLink("Add Category", "CreateCategory", null, new { @class = "btn btn-success" })
 </p>
-<hr />
 <hr />
 <div class="row">
     @foreach (var item in Model.departments)
@@ -36,9 +35,8 @@
 </form>
 <hr />
 <p>
-    @Html.ActionLink("Add Product", "Create")
+    @Html.ActionLink("Add Product", "Create", null, new { @class = "btn btn-success" })
 </p>
-<hr />
 <table class="table">
     <tr>
         <th>
@@ -49,6 +47,9 @@
         </th>
         <th>
             <a href=@Url.Action("Admin", "Departments", new {srt = 2})>@Html.DisplayName("Price")</a>
+        </th>
+        <th>
+            <a href=@Url.Action("Admin", "Departments", new {srt = 3})>@Html.DisplayName("Quantity")</a>
         </th>
         <th></th>
     </tr>
@@ -68,9 +69,19 @@
                 @Html.DisplayFor(modelItem => priceToCurrency)
             </td>
             <td>
-                @Html.ActionLink("About", "Details", new { id = item.productID }) |
-                @Html.ActionLink("Edit", "Edit", new { id = item.productID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.productID })
+                @Html.DisplayFor(modelItem => item.productQty)
+            </td>
+            <td>
+                @if (item.productQty == 0)
+                {
+                    <p>Out of Stock</p>
+                }
+                else
+                {
+                    <span>@Html.ActionLink("About", "Details", new { id = item.productID }, new { @class = "btn btn-primary" })</span>
+                }
+                @Html.ActionLink("Edit", "Edit", new { id = item.productID }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Delete", "Delete", new { id = item.productID }, new { @class = "btn btn-primary" })
             </td>
         </tr>
     }

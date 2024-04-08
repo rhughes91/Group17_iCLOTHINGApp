@@ -81,8 +81,11 @@
 
     @if (currentUser == "admin")
     {
+        @Html.ActionLink("Create", "Create", null, new { @class = "btn btn-primary btn-sm" })
+
         foreach (var item in Model)
         {
+            <p>adminviewstuff</p>
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Company Information</h5>
@@ -92,7 +95,7 @@
                     <p class="card-text">Business Description: @Html.DisplayFor(modelItem => item.businessDescription)</p>
                     <p class="card-text">Administrator Name: @Html.DisplayFor(modelItem => item.Administrator.adminName)</p>
 
-                    @Html.ActionLink("Create", "Create", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
+
                     @Html.ActionLink("Edit", "Edit", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
                     @Html.ActionLink("Delete", "Delete", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
 

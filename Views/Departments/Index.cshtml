@@ -42,6 +42,9 @@
         <th>
             <a href=@Url.Action("Index", "Departments", new {sort = 2})>@Html.DisplayName("Price")</a>
         </th>
+        <th>
+            <a href=@Url.Action("Index", "Departments", new {sort = 3})>@Html.DisplayName("Quantity")</a>
+        </th>
         <th></th>
     </tr>
 
@@ -49,19 +52,29 @@
     {
         var brandName = (from brand in Model.brands where item.brandID == brand.brandID select brand.brandName);
         var priceToCurrency = item.productPrice.ToString("C", System.Globalization.CultureInfo.CurrentCulture);
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.productName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => brandName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => priceToCurrency)
-            </td>
-            <td>
-                @Html.ActionLink("About", "Details", new { id = item.productID })
-            </td>
-        </tr>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.productName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => brandName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => priceToCurrency)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.productQty)
+    </td>
+    <td>
+        @if (item.productQty == 0)
+        {
+            <p>Out of Stock</p>
+        }
+        else
+        {
+            @Html.ActionLink("About", "Details", new { id = item.productID }, new { @class = "btn btn-primary" })
+        }
+    </td>
+</tr>
     }
 </table>

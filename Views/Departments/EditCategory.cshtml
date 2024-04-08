@@ -1,21 +1,23 @@
 ﻿@model Group17_iCLOTHINGApp.Models.Category
 
 @{
-    ViewBag.Title = "Create Category";
+    ViewBag.Title = "Edit";
 }
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
 <div class="form-horizontal">
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.categoryID)
+    <div class="form-group">
+        @Html.HiddenFor(model => model.categoryID)
+    </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.categoryName, "Name", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.categoryName, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.categoryName, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.categoryName, "", new { @class = "text-danger" })
@@ -23,7 +25,7 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.categoryDescription, "Description", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.categoryDescription, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.categoryDescription, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.categoryDescription, "", new { @class = "text-danger" })
@@ -31,7 +33,7 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.departmentID, "Department", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.departmentID, "departmentID", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.DropDownList("departmentID", null, htmlAttributes: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.departmentID, "", new { @class = "text-danger" })
@@ -39,17 +41,16 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.parentID, "Parent Category", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.parentID, "parentID", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.DropDownList("parentID", null, "None", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("parentID", null, "", htmlAttributes: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.parentID, "", new { @class = "text-danger" })
         </div>
     </div>
 
-
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Create" class="btn btn-default" />
+            <input type="submit" value="Save" class="btn btn-default" />
         </div>
     </div>
 </div>

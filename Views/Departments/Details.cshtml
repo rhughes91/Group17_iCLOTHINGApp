@@ -28,8 +28,7 @@
             @Html.DisplayFor(model => model.productDescription)
         </dd>
     </dl>
-    @Html.ActionLink("Add to Cart", "Create", "ShoppingCarts", new { id = Model.productID}, null)
+    @Html.ActionLink("Add to Cart", "Create", "ShoppingCarts", new { id = Model.productID }, new { @class = "btn btn-success" })
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
 </div>
-<p>
-    @Html.ActionLink("Back to List", "Index")
-</p>
+

@@ -2,7 +2,7 @@
 
 @{ ViewBag.Title = "Edit"; }
 
-<h2>Edit</h2>
+<h2>Change Item Quantity</h2>
 
 
 @using (Html.BeginForm())
@@ -26,16 +26,14 @@
                     @Html.HiddenFor(model => model.productID)
                     @Html.HiddenFor(model => model.customerID)
 
+
+
                     <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="submit" value="Save" class="btn btn-default" />
-                        </div>
+                        <a href="@Url.Action("Index", "ShoppingCarts")" class="btn btn-primary">Return to cart</a>
+                        <button type="submit" class="btn btn-success">Change Quantity</button>
                     </div>
                 </div>}
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

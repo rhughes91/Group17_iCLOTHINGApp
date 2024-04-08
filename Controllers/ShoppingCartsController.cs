@@ -29,32 +29,32 @@ namespace Group17_iCLOTHINGApp.Controllers
         // GET: ShoppingCarts
         public ActionResult Index()
         {
-            if (UserPasswordsController.Verified())//If the user is logged in
+            if (!UserPasswordsController.Verified())//If the user is logged in
             {
-                var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);//show their stuff
-                return View(shoppingCart.ToList());
+                return RedirectToAction("Index", "UserPasswords");
             }
-            else
+            else if(UserPasswordsController.CurrentUser() == "admin")
             {
-                return View("~/Views/Home/Index.cshtml");
+                return RedirectToAction("Index", "Home");
             }
+            var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);//show their stuff
+            return View(shoppingCart.ToList());
         }
 
         // GET: ShoppingCarts/Create
-        public ActionResult Create(string id)
+        public ActionResult Create()
         {
-            ViewBag.customerID = new SelectList(db.Customer, "customerID", "customerName");
+            if (!UserPasswordsController.Verified())
+            {
+                return RedirectToAction("Index", "UserPasswords");
+            }
+            else if (UserPasswordsController.CurrentUser() == "admin")
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Product.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.product = product;
+            ViewBag.customerID = new SelectList(db.Customer, "customerID", "customerName");
+            ViewBag.productID = new SelectList(db.Product, "productID", "productName");
             return View();
         }
 
@@ -79,6 +79,10 @@ namespace Group17_iCLOTHINGApp.Controllers
                 if (db.Product.Find(shoppingCart.productID).productQty < productQuantity)
                 {
                     ViewBag.ErrorMessage = "Not enough of this item in stock";
+                }
+                else if (productQuantity <= 0)
+                {
+                    ViewBag.ErrorMessage = "You must buy a minimum of 1 of any item";
                 }
                 else
                 {
@@ -123,6 +127,10 @@ namespace Group17_iCLOTHINGApp.Controllers
                 if (db.Product.Find(shoppingCart.productID).productQty < productQuantity)
                 {
                     ViewBag.ErrorMessage = "Not enough of this item in stock";
+                }
+                else if (productQuantity <= 0)
+                {
+                    ViewBag.ErrorMessage = "You must buy a minimum of 1 of any item";
                 }
                 else
                 {

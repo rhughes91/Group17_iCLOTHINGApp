@@ -83,40 +83,78 @@ namespace Group17_iCLOTHINGApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                orderStatus.adminID = null;
-                orderStatus.status = "Confirmed";
-
                 String orderID = GenerateUniqueOrderID().ToString();
-                orderStatus.orderID = orderID;
+
 
                 var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);
 
                 String userID = UserPasswordsController.CurrentUser();
                 String custID = UserPasswordsController.CurrentCustomer();
 
-                orderStatus.statusDate = DateTime.Now;
+                bool canComplete = true;
+                bool isEmpty = true;
 
-                db.OrderStatus.Add(orderStatus);
+                foreach (var item in db.ShoppingCart)
+                {
+                    if (item.OrderID == null && item.customerID == custID)
+                    {
+                        isEmpty = false;
+
+                        string productID = item.productID;
+                        if (db.Product.Find(productID).productQty < item.productQuantity)
+                        {
+                            //handle last second out of stock error message
+                            ViewBag.ErrorMessage = "Error purchasing item number " + productID + ". ";
+
+                            canComplete = false;
+                        }
+                    }
+                }
+
+                if (isEmpty)
+                {
+                    //handle cart empty error
+                    ViewBag.ErrorMessage = "Error: Cart is empty";
+
+                    canComplete = false;
+                }
+
+                if (!canComplete) return View(orderStatus);
+
+
+                orderStatus.adminID = db.Administrator.FirstOrDefault().adminID;
+                orderStatus.status = "Confirmed";
+                orderStatus.orderID = orderID;
+                orderStatus.statusDate = DateTime.Now;
 
                 foreach (var item in db.ShoppingCart)
                 {
                     if (item.OrderID == null && item.customerID == custID)
                     {
                         item.OrderID = orderID;
-                    }
 
-                    string productID = item.productID;
+                        string productID = item.productID;
 
-                    if (db.Product.Find(productID).productQty > item.productQuantity)
-                    {
-                        db.Product.Find(productID).productQty -= item.productQuantity;
-                    }
-                    else
-                    {
-                        //handle last second out of stock error message
+                        int updatedItemQty = db.Product.Find(productID).productQty - item.productQuantity;
+
+                        db.Product.Find(productID).productQty = updatedItemQty;
+
+                        if (updatedItemQty <= 5)
+                        {
+                            Email validationEmail = new Email();
+                            validationEmail.emailNo = GenerateUniqueEmailID().ToString();
+                            validationEmail.emailDate = DateTime.Now;
+                            validationEmail.emailBody = "Product number " + item.productID + " has " + updatedItemQty + " in stock!";
+                            validationEmail.emailSubject = "Product Stock Low";
+                            validationEmail.customerID = custID;
+                            validationEmail.adminID = "administrator0";
+
+                            db.Email.Add(validationEmail);
+                        }
                     }
                 }
 
+                db.OrderStatus.Add(orderStatus);
                 db.SaveChanges();
 
                 return RedirectToAction("Index", "Home");
@@ -215,12 +253,6 @@ namespace Group17_iCLOTHINGApp.Controllers
                 validationEmail.emailDate = DateTime.Now;
                 validationEmail.emailBody = "Your order number " + orderStatus.orderID + " has been validated!";
                 validationEmail.emailSubject = "Order Confirmation";
-
-                Debug.Print("Woo Hoo!");
-                if (orderStatus.orderID == null) Debug.Print(":(");
-                if (orderStatus.orderID != null) Debug.Print(":)");
-                Debug.Print(orderStatus.orderID);
-                Debug.Print(db.ShoppingCart.FirstOrDefault(c => c.OrderID == orderStatus.orderID)?.customerID);
 
                 validationEmail.customerID = db.ShoppingCart.FirstOrDefault(c => c.OrderID == orderStatus.orderID)?.customerID;//Very roundabout way to find it "Jaered"
                 validationEmail.adminID = "administrator0";

@@ -23,7 +23,16 @@ namespace Group17_iCLOTHINGApp.Controllers
             int id = random.Next(10000, 100000);
 
             // Generate a random number within the range of 10000 to 99999
-            while (db.ShoppingCart.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            while (db.Category.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            return id;
+        }
+
+        public int GenerateUniqueProductID()
+        {
+            int id = random.Next(10000, 100000);
+
+            // Generate a random number within the range of 10000 to 99999
+            while (db.Product.Find(id.ToString()) != null) id = random.Next(10000, 100000);
             return id;
         }
 
@@ -57,6 +66,9 @@ namespace Group17_iCLOTHINGApp.Controllers
                 break;
                 case 2:
                     sortedProducts = products.OrderBy(o => o.productPrice).ToList();
+                    break;
+                case 3:
+                    sortedProducts = products.OrderBy(o => o.productQty).ToList();
                     break;
                 default:
                     sortedProducts = products.OrderBy(o => o.productName).ToList();
@@ -244,6 +256,10 @@ namespace Group17_iCLOTHINGApp.Controllers
                 lastSort = -1;
                 return RedirectToAction("Index");
             }
+
+            var parents = from cats in db.Category select cats.parentID;
+            ViewBag.categoryID = new SelectList(from cts in db.Category where !parents.Contains(cts.categoryID) select cts, "categoryID", "categoryName");
+            ViewBag.brandID = new SelectList(db.Brand, "brandID", "brandName");
             return View();
         }
 
@@ -251,6 +267,7 @@ namespace Group17_iCLOTHINGApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "productID,productName,productDescription,productPrice,productQty,categoryID,brandID")] Product product)
         {
+            product.productID = GenerateUniqueProductID().ToString();
             if (ModelState.IsValid)
             {
                 db.Product.Add(product);
@@ -269,23 +286,62 @@ namespace Group17_iCLOTHINGApp.Controllers
                 lastSort = -1;
                 return RedirectToAction("Index");
             }
+            ViewBag.departmentID = new SelectList(db.Department, "departmentID", "departmentName");
+            ViewBag.parentID = new SelectList(db.Category, "categoryID", "categoryName");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateCategory([Bind(Include = "categoryName,categoryDescription")] Category category, String depName, String parentName)
+        public ActionResult CreateCategory([Bind(Include = "categoryName,categoryDescription,departmentID,parentID")] Category category)
         {
             category.categoryID = GenerateUniqueCategoryID().ToString();
-            category.departmentID = (from dps in db.Department where dps.departmentName == depName select dps.departmentID).FirstOrDefault();
-            category.parentID = (from cats in db.Category where cats.categoryName == parentName select cats.categoryID).FirstOrDefault();
-            if (ModelState.IsValid && category.departmentID != null)
+            if (ModelState.IsValid)
             {
                 db.Category.Add(category);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
+            return View(category);
+        }
+
+        // GET: Departments/Edit/5
+        public ActionResult EditCategory(string id)
+        {
+            if (UserPasswordsController.CurrentUser() != "admin")
+            {
+                lastSort = -1;
+                return RedirectToAction("Index");
+            }
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Category category = db.Category.Find(id);
+            if (category == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.departmentID = new SelectList(db.Department, "departmentID", "departmentName", category.departmentID);
+            ViewBag.parentID = new SelectList(db.Category, "parentID", "categoryName", category.parentID);
+            return View(category);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditCategory([Bind(Include = "categoryID,categoryName,categoryDescription,departmentID,parentID")] Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(category).State = EntityState.Modified;
+                db.SaveChanges();
+
+                lastSort = -1;
+                return RedirectToAction("Admin");
+            }
             return View(category);
         }
 
@@ -308,6 +364,10 @@ namespace Group17_iCLOTHINGApp.Controllers
             {
                 return HttpNotFound();
             }
+
+            var parents = from cats in db.Category select cats.parentID;
+            ViewBag.categoryID = new SelectList(from cts in db.Category where !parents.Contains(cts.categoryID) select cts, "categoryID", "categoryName", product.categoryID);
+            ViewBag.brandID = new SelectList(db.Brand, "brandID", "brandName", product.brandID);
             return View(product);
         }
 
@@ -319,7 +379,9 @@ namespace Group17_iCLOTHINGApp.Controllers
             {
                 db.Entry(product).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                lastSort = -1;
+                return RedirectToAction("Admin");
             }
             return View(product);
         }
@@ -368,6 +430,10 @@ namespace Group17_iCLOTHINGApp.Controllers
             if (product == null)
             {
                 return HttpNotFound();
+            }
+            if(product.productQty == 0)
+            {
+                return View("Index");
             }
             return View(product);
         }
