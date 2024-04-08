@@ -14,13 +14,19 @@ namespace Group17_iCLOTHINGApp.Models
     
     public partial class OrderStatus
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public OrderStatus()
+        {
+            this.ShoppingCart = new HashSet<ShoppingCart>();
+        }
+    
         public string orderID { get; set; }
         public string status { get; set; }
         public System.DateTime statusDate { get; set; }
-        public string cartID { get; set; }
         public string adminID { get; set; }
     
         public virtual Administrator Administrator { get; set; }
-        public virtual ShoppingCart ShoppingCart { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ShoppingCart> ShoppingCart { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -24,11 +25,29 @@ namespace Group17_iCLOTHINGApp.Controllers
             return id;
         }
 
+        public int GenerateUniqueEmailID()
+        {
+            int id = random.Next(10000, 100000);
+
+            // Generate a random number within the range of 10000 to 99999
+            while (db.Email.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            return id;
+        }
+
+        public int GenerateUniqueStickerID()
+        {
+            int id = random.Next(10000, 100000);
+
+            // Generate a random number within the range of 10000 to 99999
+            while (db.ItemDelivery.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            return id;
+        }
+
 
         // GET: OrderStatus
         public ActionResult Index()
         {
-            var orderStatus = db.OrderStatus.Include(o => o.Administrator).Include(o => o.ShoppingCart);
+            var orderStatus = db.OrderStatus.Include(o => o.ShoppingCart);
             return View(orderStatus.ToList());
         }
 
@@ -60,71 +79,50 @@ namespace Group17_iCLOTHINGApp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "orderID,status,statusDate,cartID,adminID")] OrderStatus orderStatus)
+        public ActionResult Create([Bind(Include = "orderID,status,statusDate,adminID")] OrderStatus orderStatus)
         {
             if (ModelState.IsValid)
             {
-                orderStatus.adminID = "admin";
+                orderStatus.adminID = null;
                 orderStatus.status = "Confirmed";
-                orderStatus.orderID = GenerateUniqueOrderID().ToString();
+
+                String orderID = GenerateUniqueOrderID().ToString();
+                orderStatus.orderID = orderID;
 
                 var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);
-                String curCartID = shoppingCart.ToList().First().cartID;
 
-                orderStatus.cartID = curCartID;
-                orderStatus.statusDate = DateTime.Now.AddDays(14);
+                String userID = UserPasswordsController.CurrentUser();
+                String custID = UserPasswordsController.CurrentCustomer();
+
+                orderStatus.statusDate = DateTime.Now;
 
                 db.OrderStatus.Add(orderStatus);
 
                 foreach (var item in db.ShoppingCart)
                 {
+                    if (item.OrderID == null && item.customerID == custID)
+                    {
+                        item.OrderID = orderID;
+                    }
+
                     string productID = item.productID;
-                    db.Product.Find(productID).productQty -= item.productQuantity;
-                    //db.ShoppingCart.Remove(item);
+
+                    if (db.Product.Find(productID).productQty > item.productQuantity)
+                    {
+                        db.Product.Find(productID).productQty -= item.productQuantity;
+                    }
+                    else
+                    {
+                        //handle last second out of stock error message
+                    }
                 }
 
                 db.SaveChanges();
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.adminID = new SelectList(db.Administrator, "adminID", "adminName", orderStatus.adminID);
-            ViewBag.cartID = new SelectList(db.ShoppingCart, "cartID", "productID", orderStatus.cartID);
-            return View(orderStatus);
-        }
-
-        // GET: OrderStatus/Edit/5
-        public ActionResult Edit(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            OrderStatus orderStatus = db.OrderStatus.Find(id);
-            if (orderStatus == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.adminID = new SelectList(db.Administrator, "adminID", "adminName", orderStatus.adminID);
-            ViewBag.cartID = new SelectList(db.ShoppingCart, "cartID", "productID", orderStatus.cartID);
-            return View(orderStatus);
-        }
-
-        // POST: OrderStatus/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "orderID,status,statusDate,cartID,adminID")] OrderStatus orderStatus)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(orderStatus).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.adminID = new SelectList(db.Administrator, "adminID", "adminName", orderStatus.adminID);
-            ViewBag.cartID = new SelectList(db.ShoppingCart, "cartID", "productID", orderStatus.cartID);
             return View(orderStatus);
         }
 
@@ -152,6 +150,103 @@ namespace Group17_iCLOTHINGApp.Controllers
             db.OrderStatus.Remove(orderStatus);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        // GET: OrderStatus/Edit/5
+        public ActionResult Validate(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            OrderStatus orderStatus = db.OrderStatus.Find(id);
+            if (orderStatus == null)
+            {
+                return HttpNotFound();
+            }
+
+            orderStatus.status = "Validated";
+            orderStatus.adminID = "administrator0";
+
+            Email validationEmail = new Email();
+            validationEmail.emailNo = GenerateUniqueEmailID().ToString();
+            validationEmail.emailDate = DateTime.Now;
+            validationEmail.emailBody = "Your order number " + orderStatus.orderID + " has been validated!";
+            validationEmail.emailSubject = "Order Confirmation";
+            validationEmail.customerID = db.ShoppingCart.FirstOrDefault(c => c.OrderID == orderStatus.orderID)?.customerID;//Very roundabout way to find it
+            validationEmail.adminID = "administrator0";
+
+            db.Email.Add(validationEmail);
+
+
+            foreach (var item in db.ShoppingCart)
+            {
+                if (item.OrderID == orderStatus.orderID)
+                {
+                    ItemDelivery itemDelivery = new ItemDelivery();
+                    itemDelivery.stickerID = GenerateUniqueStickerID().ToString();
+                    itemDelivery.cartID = item.cartID;
+                    itemDelivery.stickerDate = DateTime.Now;
+
+                    db.ItemDelivery.Add(itemDelivery);
+                }
+            }
+
+            db.SaveChanges();
+
+            ViewBag.adminID = new SelectList(db.Administrator, "adminID", "adminName", orderStatus.adminID);
+            return View(orderStatus);
+        }
+
+        // POST: OrderStatus/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Validate([Bind(Include = "orderID,status,statusDate,adminID")] OrderStatus orderStatus)
+        {
+            if (ModelState.IsValid)
+            {
+                orderStatus.status = "Validated";
+                orderStatus.adminID = "administrator0";
+
+                Email validationEmail = new Email();
+                validationEmail.emailNo = GenerateUniqueEmailID().ToString();
+                validationEmail.emailDate = DateTime.Now;
+                validationEmail.emailBody = "Your order number " + orderStatus.orderID + " has been validated!";
+                validationEmail.emailSubject = "Order Confirmation";
+
+                Debug.Print("Woo Hoo!");
+                if (orderStatus.orderID == null) Debug.Print(":(");
+                if (orderStatus.orderID != null) Debug.Print(":)");
+                Debug.Print(orderStatus.orderID);
+                Debug.Print(db.ShoppingCart.FirstOrDefault(c => c.OrderID == orderStatus.orderID)?.customerID);
+
+                validationEmail.customerID = db.ShoppingCart.FirstOrDefault(c => c.OrderID == orderStatus.orderID)?.customerID;//Very roundabout way to find it "Jaered"
+                validationEmail.adminID = "administrator0";
+
+                db.Email.Add(validationEmail);
+
+                foreach (var item in db.ShoppingCart)
+                {
+                    if (item.OrderID == orderStatus.orderID)
+                    {
+                        ItemDelivery itemDelivery = new ItemDelivery();
+                        itemDelivery.stickerID = GenerateUniqueStickerID().ToString();
+                        itemDelivery.cartID = item.cartID;
+                        itemDelivery.stickerDate = DateTime.Now;
+
+                        db.ItemDelivery.Add(itemDelivery);
+                    }
+                }
+
+                db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.adminID = new SelectList(db.Administrator, "adminID", "adminName", orderStatus.adminID);
+            return View(orderStatus);
         }
 
         protected override void Dispose(bool disposing)

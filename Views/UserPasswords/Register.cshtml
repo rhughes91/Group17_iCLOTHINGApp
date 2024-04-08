@@ -8,76 +8,74 @@
 {
 	@Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-	<hr />
-	<h4>Register</h4>
-	<hr />
+	<div class="form-horizontal">
+		<hr />
 
-	@Html.ValidationSummary(true, "", new { @class = "text-danger" })
-	<div class="form-group">
-		@Html.LabelFor(model => model.customer.userID, "Username", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-		<div class="col-md-10">
-			@Html.EditorFor(model => model.customer.userID, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "usrnm", @class = "form-control" } })
-			@Html.ValidationMessageFor(model => model.customer.userID, "", new { @class = "text-danger" })
+		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+		<div class="form-group">
+			@Html.LabelFor(model => model.customer.userID, "Username", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.customer.userID, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "usrnm", @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.customer.userID, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.password, "Password", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.password, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "pwd", @type = "password", @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group">
+			@Html.Label("* Confirm Password", htmlAttributes: new { @id = "check-label", @style = "width: 10%; font-style: italic;", @class = "control-label col-md-1" })
+			<div class="col-md-10">
+				@Html.Editor("Repeat Password", new { htmlAttributes = new { @oninput = "IsComplete()", @id = "pwd-check", @type = "password", @class = "form-control" } })
+				@Html.ValidationMessage("Repeat Password", "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<hr />
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.customer.customerID, "Screen Name", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.customer.customerID, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "screen-id", @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.customer.customerID, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.customer.customerName, "Full Name", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.customer.customerName, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "name", @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.customer.customerName, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.customer.customerDOB, "Date of Birth", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.customer.customerDOB, new { htmlAttributes = new { @onchange = "IsComplete()", @id = "date", @type = "date", @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.customer.customerDOB, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.customer.customerGender, "Gender", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.customer.customerGender, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "gender", @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.customer.customerGender, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-md-offset-2 col-md-10">
+				<input id="submit-button" type="submit" value="Create" class="btn btn-primary" disabled />
+			</div>
 		</div>
 	</div>
-
-	<div class="form-group">
-		@Html.LabelFor(model => model.password, "Password", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-		<div class="col-md-10">
-			@Html.EditorFor(model => model.password, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "pwd", @type = "password", @class = "form-control" } })
-			@Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
-		</div>
-	</div>
-
-	<div class="form-group">
-		@Html.Label("* Confirm Password", htmlAttributes: new { @id = "check-label", @style = "width: 10%; font-style: italic;", @class = "control-label col-md-1" })
-		<div class="col-md-10">
-			@Html.Editor("Repeat Password", new { htmlAttributes = new { @oninput = "IsComplete()", @id = "pwd-check", @type = "password", @class = "form-control" } })
-			@Html.ValidationMessage("Repeat Password", "", new { @class = "text-danger" })
-		</div>
-	</div>
-
-	<hr />
-
-	<div class="form-group">
-		@Html.LabelFor(model => model.customer.customerID, "Screen Name", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-		<div class="col-md-10">
-			@Html.EditorFor(model => model.customer.customerID, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "screen-id", @class = "form-control" } })
-			@Html.ValidationMessageFor(model => model.customer.customerID, "", new { @class = "text-danger" })
-		</div>
-	</div>
-
-	<div class="form-group">
-		@Html.LabelFor(model => model.customer.customerName, "Full Name", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-		<div class="col-md-10">
-			@Html.EditorFor(model => model.customer.customerName, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "name", @class = "form-control" } })
-			@Html.ValidationMessageFor(model => model.customer.customerName, "", new { @class = "text-danger" })
-		</div>
-	</div>
-
-	<div class="form-group">
-		@Html.LabelFor(model => model.customer.customerDOB, "Date of Birth", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-		<div class="col-md-10">
-			@Html.EditorFor(model => model.customer.customerDOB, new { htmlAttributes = new { @onchange = "IsComplete()", @id = "date", @type = "date", @class = "form-control" } })
-			@Html.ValidationMessageFor(model => model.customer.customerDOB, "", new { @class = "text-danger" })
-		</div>
-	</div>
-
-	<div class="form-group">
-		@Html.LabelFor(model => model.customer.customerGender, "Gender", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-		<div class="col-md-10">
-			@Html.EditorFor(model => model.customer.customerGender, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "gender", @class = "form-control" } })
-			@Html.ValidationMessageFor(model => model.customer.customerGender, "", new { @class = "text-danger" })
-		</div>
-	</div>
-
-	<div class="form-group">
-		<div class="col-md-offset-2 col-md-10">
-			<input id="submit-button" type="submit" value="Create" class="btn btn-primary" disabled />
-		</div>
-	</div>
-</div>
 
 	<script>
 		var usernameCompleted = passwordCompleted = idCompleted = nameCompleted = dateCompleted = genderCompleted = false

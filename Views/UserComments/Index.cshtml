@@ -1,39 +1,41 @@
 ﻿@model IEnumerable<Group17_iCLOTHINGApp.Models.UserComment>
 
-@{ ViewBag.Title = "Index";
-				string currentUser = Group17_iCLOTHINGApp.Controllers.UserPasswordsController..CurrentUser(); }
+@{
+    ViewBag.Title = "Index";
+    string currentUser = Group17_iCLOTHINGApp.Controllers.UserPasswordsController.CurrentUser();
+}
 
-<h2>Index</h2>
+<h2>Submitted Comments and Feedback</h2>
 
-<table class="table">
-	<tr>
-		<th>
-			@Html.DisplayNameFor(model => model.commentDate)
-		</th>
-		<th>
-			@Html.DisplayNameFor(model => model.commentDescription)
-		</th>
-		<th>
-			@Html.DisplayNameFor(model => model.Customer.customerName)
-		</th>
-		<th></th>
-	</tr>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Comment Number</th>
+                <th>Comment Date</th>
+                <th>Comment Name</th>
+                <th>Comment Description</th>
+            </tr>
+        </thead>
 
-	@foreach (var item in Model)
-	{
-		if (item.Customer.customerID == currentUser || currentUser == "admin")
-		{
-<tr>
-	<td>
-		@Html.DisplayFor(modelItem => item.commentDate)
-	</td>
-	<td>
-		@Html.DisplayFor(modelItem => item.commentDescription)
-	</td>
-	<td>
-		@Html.DisplayFor(modelItem => item.Customer.customerName)
-	</td>
-</tr>}
-			}
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.Customer.userID == currentUser || currentUser == "admin")
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.commentNo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.commentDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Customer.customerName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.commentDescription)</td>
+                        <td>@Html.ActionLink("Delete Comment", "Delete", new { id = item.commentNo }, new { @class = "btn btn-danger btn-sm" })</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
 
-</table>
+
+</div>
+
+<a href="@Url.Action("Index", "AboutUs")" class="btn btn-primary">Return to About Us</a>

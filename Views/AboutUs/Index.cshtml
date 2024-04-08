@@ -1,73 +1,105 @@
 ﻿@model IEnumerable<Group17_iCLOTHINGApp.Models.AboutUs>
 
 @{
-	ViewBag.Title = "Index";
-	string currentUser = "admin";//UserPasswordsController.CurrentUser();
+    ViewBag.Title = "Index";
+    string currentUser = Group17_iCLOTHINGApp.Controllers.UserPasswordsController.CurrentUser();
+    bool isVerified = Group17_iCLOTHINGApp.Controllers.UserPasswordsController.Verified();
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
 }
 
 <div class="container">
-	<h2>About Us</h2>
-	<p>Welcome to our company's About Us page. Here you can learn more about our shipping policy, return policy, contact information, and business description.</p>
+    <h2>About Us</h2>
+    <p>Welcome to our company's About Us page. Here you can learn more about our shipping policy, return policy, contact information, and business description.</p>
 
-	@foreach (var item in Model)
-	{
-		<table class="table">
-			<tr>
-				<th>Shipping Policy</th>
-				<td>@Html.DisplayFor(modelItem => item.shippingPolicy)</td>
-			</tr>
-			<tr>
-				<th>Return Policy</th>
-				<td>@Html.DisplayFor(modelItem => item.returnPolicy)</td>
-			</tr>
-			<tr>
-				<th>Contact Information</th>
-				<td>@Html.DisplayFor(modelItem => item.contactInfo)</td>
-			</tr>
-			<tr>
-				<th>Business Description</th>
-				<td>@Html.DisplayFor(modelItem => item.businessDescription)</td>
-			</tr>
-			<tr>
-				<th>Administrator Name</th>
-				<td>@Html.DisplayFor(modelItem => item.Administrator.adminName)</td>
-			</tr>
-		</table>
-	}
+    @foreach (var item in Model)
+    {
+        <table class="table">
+            <tr>
+                <th>Shipping Policy</th>
+                <td>@Html.DisplayFor(modelItem => item.shippingPolicy)</td>
+            </tr>
+            <tr>
+                <th>Return Policy</th>
+                <td>@Html.DisplayFor(modelItem => item.returnPolicy)</td>
+            </tr>
+            <tr>
+                <th>Contact Information</th>
+                <td>@Html.DisplayFor(modelItem => item.contactInfo)</td>
+            </tr>
+            <tr>
+                <th>Business Description</th>
+                <td>@Html.DisplayFor(modelItem => item.businessDescription)</td>
+            </tr>
+        </table>
+    }
 
+    <br><br>
 
+    @if (isVerified)
+    {
+        if (currentUser == "admin")
+        {
+            <div class="text-center">
+                Review all user's comments and feedback here!
+                <br>
+                <a href="@Url.Action("Index", "UserQueries")" class="btn btn-primary">View all Queries</a>
 
-	<br><br>
+                <a href="@Url.Action("Index", "UserComments")" class="btn btn-primary">View all Comments</a>
+            </div>
+        }
+        else
+        {
+            <div class="text-center">
+                Have any questions, comments, or concerns? Contact us through our User Query and Comment webpages!
+                <br>
+                <a href="@Url.Action("Create", "UserQueries")" class="btn btn-primary">Submit a Query</a>
+                <a href="@Url.Action("Create", "UserComments")" class="btn btn-primary">Submit a Comment</a>
+            </div>
 
-	<div class="text-center">
-		Have any questions or concerns? Contact us through our User Query webpage!
-		<br>
-		<a href="@Url.Action("Create", "UserQueries")" class="btn btn-primary">Submit a Query</a>
-	</div>
+            <br><br>
 
-	<br><br>
+            <div class="text-center">
+                Curious about the status of your previous queries or feedback? View them here!
+                <br>
+                <a href="@Url.Action("Index", "UserQueries")" class="btn btn-primary">View your Queries</a>
+                <a href="@Url.Action("Index", "UserComments")" class="btn btn-primary">View your Comments</a>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center">
+            Have any questions, comments, or concerns? Log-in or Register and return here to contact us!
+        </div>
+    }
 
-	@if (currentUser == "admin")
-	{
-		foreach (var item in Model)
-		{
-			<div class="card">
-				<div class="card-body">
-					<h5 class="card-title">Company Information</h5>
-					<p class="card-text">Shipping Policy: @Html.DisplayFor(modelItem => item.shippingPolicy)</p>
-					<p class="card-text">Return Policy: @Html.DisplayFor(modelItem => item.returnPolicy)</p>
-					<p class="card-text">Contact Information: @Html.DisplayFor(modelItem => item.contactInfo)</p>
-					<p class="card-text">Business Description: @Html.DisplayFor(modelItem => item.businessDescription)</p>
-					<p class="card-text">Administrator Name: @Html.DisplayFor(modelItem => item.Administrator.adminName)</p>
+    <br><br>
 
-					@Html.ActionLink("Create", "Create", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
-					@Html.ActionLink("Edit", "Edit", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
-					@Html.ActionLink("Delete", "Delete", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
+    @if (currentUser == "admin")
+    {
+        foreach (var item in Model)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Company Information</h5>
+                    <p class="card-text">Shipping Policy: @Html.DisplayFor(modelItem => item.shippingPolicy)</p>
+                    <p class="card-text">Return Policy: @Html.DisplayFor(modelItem => item.returnPolicy)</p>
+                    <p class="card-text">Contact Information: @Html.DisplayFor(modelItem => item.contactInfo)</p>
+                    <p class="card-text">Business Description: @Html.DisplayFor(modelItem => item.businessDescription)</p>
+                    <p class="card-text">Administrator Name: @Html.DisplayFor(modelItem => item.Administrator.adminName)</p>
 
-				</div>
-			</div>
-		}
-	}
+                    @Html.ActionLink("Create", "Create", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
+                    @Html.ActionLink("Edit", "Edit", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.companyAddress }, new { @class = "btn btn-primary btn-sm" })
+
+                </div>
+            </div>
+        }
+    }
 </div>
 
 

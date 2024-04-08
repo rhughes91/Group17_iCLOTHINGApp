@@ -31,7 +31,5 @@ namespace Group17_iCLOTHINGApp.Models
         public virtual ICollection<Administrator> Administrator { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Customer> Customer { get; set; }
-        public virtual UserPassword UserPassword1 { get; set; }
-        public virtual UserPassword UserPassword2 { get; set; }
     }
 }

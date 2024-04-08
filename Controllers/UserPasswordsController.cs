@@ -13,6 +13,7 @@ namespace Group17_iCLOTHINGApp.Controllers
     public class UserPasswordsController : Controller
     {
         private static String currentUser = null;
+        private static String currentCust = null;
 
         public static bool Verified()
         {
@@ -24,6 +25,10 @@ namespace Group17_iCLOTHINGApp.Controllers
             return currentUser;
         }
 
+        public static String CurrentCustomer()
+        {
+            return currentCust;
+        }
 
         public class Account
         {
@@ -39,11 +44,16 @@ namespace Group17_iCLOTHINGApp.Controllers
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
         // GET: UserPasswords
-        public ActionResult Index()
+        public ActionResult Index(bool? status)
         {
+            if(status == true)
+            {
+                currentUser = null;
+                currentCust = null;
+            }
             if(Verified())
             {
-                return View("~/Views/Home/Index.cshtml");
+                return RedirectToAction("LoggedIn");
             }
             return View();
         }
@@ -56,11 +66,13 @@ namespace Group17_iCLOTHINGApp.Controllers
             if (query.Any())
             {
                 currentUser = result.userID;
+                currentCust = (from cust in db.Customer where cust.userID == currentUser select cust.customerID).FirstOrDefault();
                 return View("~/Views/Home/Index.cshtml");
             }
 
             return View(result);
         }
+
 
         public ActionResult Register()
         {
@@ -126,6 +138,53 @@ namespace Group17_iCLOTHINGApp.Controllers
             }
 
             currentUser = cust.userID;
+            currentCust = cust.customerID;
+
+            return View("~/Views/Home/Index.cshtml");
+        }
+
+        public ActionResult LoggedIn()
+        {
+            if (!Verified())
+                return RedirectToAction("Index");
+
+            Account account = new Account();
+            if (currentUser == "admin")
+            {
+                account.customer = null;
+                return View(account);
+            }
+
+            account.customer = (from customer in db.Customer where customer.userID == currentUser select customer).FirstOrDefault();
+            account.password = (from user in db.UserPassword where user.userID == currentUser select user.userEncryptedPassword).FirstOrDefault();
+            return View(account);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LoggedIn(Account result)
+        {
+            System.Diagnostics.Debug.WriteLine("RIGHT HERE: " + result.customer.customerName);
+            Customer cust = result.customer;
+            switch (cust.customerGender.ToLower())
+            {
+                case "m":
+                case "man":
+                case "male":
+                    cust.customerGender = "M";
+                    break;
+                case "f":
+                case "woman":
+                case "female":
+                    cust.customerGender = "F";
+                    break;
+                default:
+                    cust.customerGender = "X";
+                    break;
+            }
+
+            db.Entry(cust).State = EntityState.Modified;
+            db.SaveChanges();
 
             return View("~/Views/Home/Index.cshtml");
         }

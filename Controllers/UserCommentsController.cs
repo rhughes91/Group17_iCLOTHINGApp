@@ -32,21 +32,6 @@ namespace Group17_iCLOTHINGApp.Controllers
             return View(userComment.ToList());
         }
 
-        // GET: UserQueries/Details/5
-        public ActionResult Details(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserComment userComment = db.UserComment.Find(id);
-            if (userComment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userComment);
-        }
-
         // GET: UserQueries/Create
         public ActionResult Create()
         {
@@ -61,50 +46,35 @@ namespace Group17_iCLOTHINGApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "commentNo,commentDate,commentDescription,userID")] UserComment userComment)
         {
-            if (ModelState.IsValid)
+            if (!UserPasswordsController.Verified())
             {
-                userComment.userID = UserPasswordsController.CurrentUser();
-                userComment.commentNo = GenerateUniqueQueryID().ToString();
-                userComment.commentDate = DateTime.Now;
+                ViewBag.ErrorMessage = "You must be logged in to submit feedback!";
+            }
+            else
+            {
+                String userID = UserPasswordsController.CurrentUser();
 
-                db.UserComment.Add(userComment);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (userID == "admin")
+                {
+                    ViewBag.ErrorMessage = "Administrators cannot submit feedback!";
+                }
+                else
+                {
+                    String custID = db.Customer.FirstOrDefault(c => c.userID == userID)?.customerID;
+
+                    if (ModelState.IsValid)
+                    {
+                        userComment.userID = custID;
+                        userComment.commentNo = GenerateUniqueQueryID().ToString();
+                        userComment.commentDate = DateTime.Now;
+
+                        db.UserComment.Add(userComment);
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                }
             }
 
-            ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
-            return View(userComment);
-        }
-
-        // GET: UserQueries/Edit/5
-        public ActionResult Edit(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserComment userComment = db.UserComment.Find(id);
-            if (userComment == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
-            return View(userComment);
-        }
-
-        // POST: UserQueries/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "commentNo,commentDate,commentDescription,userID")] UserComment userComment)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(userComment).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
             ViewBag.searchID = new SelectList(db.Customer, "customerID", "customerName", userComment.userID);
             return View(userComment);
         }

@@ -1,52 +1,47 @@
 ﻿@model Group17_iCLOTHINGApp.Controllers.DepartmentsController.CatalogInformation
 
 @{
-	ViewBag.Title = "Admin";
+	ViewBag.Title = "AdminFilter";
 }
 
-<h2>Index</h2>
-
-<p>
-	@Html.ActionLink("Create New", "Create")
-</p>
-
 <hr />
+<a href=@Url.Action("Admin", "Departments", new {sort = 0})>@Html.DisplayName("Return To Catalog")</a>
+@{var category = Model.categories[0]; Model.categories.RemoveAt(0);}
+
 <div class="row">
 	@foreach (var item in Model.departments)
 	{
 		<div class="col-md-3">
 			<h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
 
-			@{var categories = from cat in Model.categories where cat.departmentID == item.departmentID select cat;}
+			<h5>@Html.DisplayFor(catDisplay => category.categoryName)</h5>
 
-			@foreach (var category in categories)
+			@foreach (var cat in Model.categories)
 			{
-				<a href=@Url.Action("AdminFilter", "Departments", new {id = category.categoryID })>@Html.DisplayFor(modelCategory => category.categoryName)</a><br />
+				<a href=@Url.Action("AdminFilter", "Departments", new {id = cat.categoryID })>@Html.DisplayFor(modelCategory => cat.categoryName)</a><br />
 			}
-
 		</div>
 	}
 </div>
-<hr />
-<form id="search_form" action="/Departments/Admin" method="Post">
+<form id="search_form" action="/Departments/AdminFilter" method="Post">
     @Html.AntiForgeryToken()
     <div class="form-inline">
+        <input type="hidden" name="id" value=@category.categoryID class="form-control rounded">
         <input type="text" placeholder="Search..." name="search" class="form-control rounded">
         <button type="submit" class="btn btn-primary form-group">Submit</button>
     </div>
 </form>
-<hr />
 
 <table class="table">
 	<tr>
 		<th>
-			<a href=@Url.Action("Admin", "Departments", new {srt = 0})>@Html.DisplayName("Product Name")</a>
+			<a href=@Url.Action("AdminFilter", "Departments", new {id = category.categoryID, srt = 0})>@Html.DisplayName("Product Name")</a>
 		</th>
 		<th>
-			<a href=@Url.Action("Admin", "Departments", new {srt = 1})>@Html.DisplayName("Brand")</a>
+			<a href=@Url.Action("AdminFilter", "Departments", new {id = category.categoryID, srt = 1})>@Html.DisplayName("Brand")</a>
 		</th>
 		<th>
-            <a href=@Url.Action("Admin", "Departments", new {srt = 2})>@Html.DisplayName("Price")</a>
+            <a href=@Url.Action("AdminFilter", "Departments", new {id = category.categoryID, srt = 2})>@Html.DisplayName("Price")</a>
 		</th>
 		<th></th>
 	</tr>

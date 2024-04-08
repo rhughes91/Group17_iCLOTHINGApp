@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<Group17_iCLOTHINGApp.Models.OrderStatus>
 
 @{
-	ViewBag.Title = "Index";
+    ViewBag.Title = "Index";
+    string currentUser = Group17_iCLOTHINGApp.Controllers.UserPasswordsController.CurrentUser();
 }
 
 <h2>Current Order Statuses</h2>
@@ -9,44 +10,39 @@
 Thank you for shopping with us!
 
 <table class="table">
-	<tr>
-		<th>
-			@Html.DisplayNameFor(model => model.status)
-		</th>
-		<th>
-			@Html.DisplayNameFor(model => model.statusDate)
-		</th>
-		<th>
-			@Html.DisplayNameFor(model => model.cartID)
-		</th>
-		<th>
-			@Html.DisplayNameFor(model => model.Administrator.adminName)
-		</th>
-		<th></th>
-	</tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.statusDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.orderID)
+        </th>
+        <th></th>
+    </tr>
 
-	@foreach (var item in Model)
-	{
-		<tr>
-			<td>
-				@Html.DisplayFor(modelItem => item.status)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.statusDate)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.cartID)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.Administrator.adminName)
-			</td>
-		</tr>
-	}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.statusDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderID)
+            </td>
 
+            @if (currentUser == "admin" && item.status == "Confirmed")
+            {
+                <td>@Html.ActionLink("Validate Order", "Validate", new { id = item.orderID }, new { @class = "btn btn-primary btn-sm" })</td>
+            }
 
-
-
-
+        </tr>
+    }
 </table>
 
 <h2>@Html.ActionLink("Return to Home", "Index", "Home")</h2>

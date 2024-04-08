@@ -1,62 +1,75 @@
 ﻿@model Group17_iCLOTHINGApp.Models.AboutUs
 
-@{ ViewBag.Title = "Delete"; }
+@{
+    ViewBag.Title = "Delete";
+    string currentUser = Group17_iCLOTHINGApp.Controllers.UserPasswordsController.CurrentUser(); }
 
-<h2>Delete</h2>
+<h2>Delete Company Details</h2>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-	<h4>AboutUs</h4>
-	<hr />
-	<dl class="dl-horizontal">
-		<dt>
-			@Html.DisplayNameFor(model => model.shippingPolicy)
-		</dt>
+@if (ViewBag.ErrorMessage != null)
+{
+<div class="alert alert-danger">@ViewBag.ErrorMessage</div>}
 
-		<dd>
-			@Html.DisplayFor(model => model.shippingPolicy)
-		</dd>
+@if (currentUser != "admin")
+{
+<div> This page is for Administrators only! </div>
 
-		<dt>
-			@Html.DisplayNameFor(model => model.returnPolicy)
-		</dt>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Return Home</a> }
+                            else
+                            {
+                <h3>Are you sure you want to delete this?</h3>
+                                <div>
+                                    <h4>AboutUs</h4>
+                                    <hr />
+                                    <dl class="dl-horizontal">
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.shippingPolicy)
+                                        </dt>
 
-		<dd>
-			@Html.DisplayFor(model => model.returnPolicy)
-		</dd>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.shippingPolicy)
+                                        </dd>
 
-		<dt>
-			@Html.DisplayNameFor(model => model.contactInfo)
-		</dt>
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.returnPolicy)
+                                        </dt>
 
-		<dd>
-			@Html.DisplayFor(model => model.contactInfo)
-		</dd>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.returnPolicy)
+                                        </dd>
 
-		<dt>
-			@Html.DisplayNameFor(model => model.businessDescription)
-		</dt>
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.contactInfo)
+                                        </dt>
 
-		<dd>
-			@Html.DisplayFor(model => model.businessDescription)
-		</dd>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.contactInfo)
+                                        </dd>
 
-		<dt>
-			@Html.DisplayNameFor(model => model.Administrator.adminName)
-		</dt>
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.businessDescription)
+                                        </dt>
 
-		<dd>
-			@Html.DisplayFor(model => model.Administrator.adminName)
-		</dd>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.businessDescription)
+                                        </dd>
 
-	</dl>
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.Administrator.adminName)
+                                        </dt>
 
-	@using (Html.BeginForm())
-	{
-@Html.AntiForgeryToken()
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Administrator.adminName)
+                                        </dd>
 
-				<div class="form-actions no-color">
-					<input type="submit" value="Delete" class="btn btn-default" /> |
-					@Html.ActionLink("Back to List", "Index")
-				</div>}
-</div>
+                                    </dl>
+
+                                    @using (Html.BeginForm())
+                                    {
+                    @Html.AntiForgeryToken()
+
+                                        <div class="form-actions no-color">
+                                            <input type="submit" value="Delete" class="btn btn-default" /> |
+                                            @Html.ActionLink("Back to List", "Index")
+                                        </div>}
+                                </div>}

@@ -17,7 +17,6 @@ namespace Group17_iCLOTHINGApp.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ShoppingCart()
         {
-            this.OrderStatus = new HashSet<OrderStatus>();
             this.ItemDelivery = new HashSet<ItemDelivery>();
         }
     
@@ -26,12 +25,12 @@ namespace Group17_iCLOTHINGApp.Models
         public int productQuantity { get; set; }
         public string productID { get; set; }
         public string customerID { get; set; }
+        public string OrderID { get; set; }
     
         public virtual Customer Customer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderStatus> OrderStatus { get; set; }
-        public virtual Product Product { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ItemDelivery> ItemDelivery { get; set; }
+        public virtual OrderStatus OrderStatus { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

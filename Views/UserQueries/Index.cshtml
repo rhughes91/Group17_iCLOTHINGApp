@@ -1,34 +1,39 @@
 ﻿@model IEnumerable<Group17_iCLOTHINGApp.Models.UserQuery>
 
-@{ ViewBag.Title = "Index";
+@{
+    ViewBag.Title = "Index";
+    string currentUser = Group17_iCLOTHINGApp.Controllers.UserPasswordsController.CurrentUser();
 }
 
-<table class="table">
-	<tr>
-		<th>
-			@Html.DisplayNameFor(model => model.queryDate)
-		</th>
-		<th>
-			@Html.DisplayNameFor(model => model.queryDescription)
-		</th>
-		<th>
-			@Html.DisplayNameFor(model => model.Customer.customerName)
-		</th>
-		<th></th>
-	</tr>
+<h2>Submitted Item Queries</h2>
 
-	@foreach (var item in Model)
-	{
-<tr>
-	<td>
-		@Html.DisplayFor(modelItem => item.queryDate)
-	</td>
-	<td>
-		@Html.DisplayFor(modelItem => item.queryDescription)
-	</td>
-	<td>
-		@Html.DisplayFor(modelItem => item.Customer.customerName)
-	</td>
-</tr>}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Query Number</th>
+                <th>Query Date</th>
+                <th>Customer Name</th>
+                <th>Query Description</th>
+            </tr>
+        </thead>
 
-</table>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.Customer.userID == currentUser || currentUser == "admin")
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.queryNo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.queryDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Customer.customerName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.queryDescription)</td>
+                        <td>@Html.ActionLink("Delete Comment", "Delete", new { id = item.queryNo }, new { @class = "btn btn-danger btn-sm" })</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<a href="@Url.Action("Index", "AboutUs")" class="btn btn-primary">Return to About Us</a>

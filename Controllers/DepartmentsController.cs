@@ -13,6 +13,7 @@ namespace Group17_iCLOTHINGApp.Controllers
     public class DepartmentsController : Controller
     {
         private static int? lastSort = -1;
+        private static String filter = "";
 
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
@@ -43,11 +44,14 @@ namespace Group17_iCLOTHINGApp.Controllers
                                       join brand in db.Brand on prod.brandID equals brand.brandID
                                       orderby brand.brandName
                                       select prod).ToList();
+                break;
+                case 2:
+                    sortedProducts = products.OrderBy(o => o.productPrice).ToList();
                     break;
                 default:
                     sortedProducts = products.OrderBy(o => o.productName).ToList();
                     sort = 0;
-                    break;
+                break;
             }
             if (lastSort == sort)
             {
@@ -65,26 +69,54 @@ namespace Group17_iCLOTHINGApp.Controllers
         public ActionResult Index(int? sort)
         {
             if (sort == null)
+            {
+                filter = null;
+                lastSort = -1;
                 sort = 0;
+            }
 
-            List<Product> sortedProducts = SortProducts(db.Product.ToList(), sort);            
+            List<Product> sortedProducts = SortProducts(db.Product.ToList(), sort);
+            if (filter != null && filter != "")
+            {
+                sortedProducts = (from sp in sortedProducts where sp.productName.ToLower().Contains(filter) select sp).ToList();
+            }
 
             if (UserPasswordsController.CurrentUser() == "admin")
             {
+                lastSort = -1;
                 return RedirectToAction("Admin", new {srt = sort});
             }
             return View(new CatalogInformation(db.Department.ToList(), db.Category.ToList(), sortedProducts, db.Brand.ToList()));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(String search)
+        {
+            filter = search.ToLower();
+            return Index(-1);
+        }
+
+
         public ActionResult Filter(String id, int? sort)
         {
+            if (UserPasswordsController.CurrentUser() == "admin")
+            {
+                lastSort = -1;
+                return RedirectToAction("AdminFilter", new { srt = sort });
+            }
+
             if (id == null)
             {
                 return RedirectToAction("Index", sort);
             }
 
             if (sort == null)
+            {
+                filter = null;
+                lastSort = -1;
                 sort = -1;
+            }
 
             Category category = (from categ in db.Category where categ.categoryID == id select categ).FirstOrDefault();
             List<Category> cats = (from cat in db.Category where cat.parentID == id select cat).ToList();
@@ -92,51 +124,119 @@ namespace Group17_iCLOTHINGApp.Controllers
 
             List<String> catIDs = (from c in cats select c.categoryID).ToList();
 
+            List<Product> sortedProducts = (from prod in db.Product where catIDs.Contains(prod.categoryID) select prod).ToList();
+            if (filter != null && filter != "")
+            {
+                sortedProducts = (from sp in sortedProducts where sp.productName.ToLower().Contains(filter) select sp).ToList();
+            }
             return View(new CatalogInformation(
                 (from dep in db.Department where dep.departmentID == category.departmentID select dep).ToList(),
                 cats,
-                SortProducts((from prod in db.Product where catIDs.Contains(prod.categoryID) select prod).ToList(), sort),
+                SortProducts(sortedProducts, sort),
                 db.Brand.ToList()
             ));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Filter(String id, String search)
+        {
+            filter = search.ToLower();
+            return Filter(id, -1);
+        }
+
+
         public ActionResult Admin(int? srt)
         {
             if (srt == null)
-                srt = -1;
+            {
+                filter = null;
+                lastSort = -1;
+                srt = 0;
+            }
 
             List<Product> sortedProducts = SortProducts(db.Product.ToList(), srt);
+            if (filter != null && filter != "")
+            {
+                sortedProducts = (from sp in sortedProducts where sp.productName.ToLower().Contains(filter) select sp).ToList();
+            }
+
             if (UserPasswordsController.CurrentUser() != "admin")
             {
-                return RedirectToAction("Index");
+                lastSort = -1;
+                return RedirectToAction("Index", new { sort = srt });
             }
             return View(new CatalogInformation(db.Department.ToList(), db.Category.ToList(), sortedProducts, db.Brand.ToList()));
         }
 
-        // GET: Departments/Details/5
-        public ActionResult Details(string id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Admin(String search)
         {
+            filter = search.ToLower();
+            return Admin(-1);
+        }
+
+
+        public ActionResult AdminFilter(String id, int? srt)
+        {
+            if (UserPasswordsController.CurrentUser() != "admin")
+            {
+                lastSort = -1;
+                return RedirectToAction("Index", new { sort = srt });
+            }
+
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Admin", srt);
             }
-            Product product = db.Product.Find(id);
-            if (product == null)
+
+            if (srt == null)
             {
-                return HttpNotFound();
+                filter = null;
+                lastSort = -1;
+                srt = -1;
             }
-            return View(product);
+
+            Category category = (from categ in db.Category where categ.categoryID == id select categ).FirstOrDefault();
+            List<Category> cats = (from cat in db.Category where cat.parentID == id select cat).ToList();
+            cats.Insert(0, category);
+
+            List<String> catIDs = (from c in cats select c.categoryID).ToList();
+
+            List<Product> sortedProducts = SortProducts((from prod in db.Product where catIDs.Contains(prod.categoryID) select prod).ToList(), srt);
+            if (filter != null && filter != "")
+            {
+                sortedProducts = (from sp in sortedProducts where sp.productName.ToLower().Contains(filter) select sp).ToList();
+            }
+            return View(new CatalogInformation(
+                (from dep in db.Department where dep.departmentID == category.departmentID select dep).ToList(),
+                cats,
+                sortedProducts,
+                db.Brand.ToList()
+            ));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AdminFilter(String id, String search)
+        {
+            filter = search.ToLower();
+            return AdminFilter(id, -1);
+        }
+
 
         // GET: Departments/Create
         public ActionResult Create()
         {
+            if (UserPasswordsController.CurrentUser() != "admin")
+            {
+                lastSort = -1;
+                return RedirectToAction("Index");
+            }
             return View();
         }
 
-        // POST: Departments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "productID,productName,productDescription,productPrice,productQty,categoryID,brandID")] Product product)
@@ -151,9 +251,16 @@ namespace Group17_iCLOTHINGApp.Controllers
             return View(product);
         }
 
+
         // GET: Departments/Edit/5
         public ActionResult Edit(string id)
         {
+            if (UserPasswordsController.CurrentUser() != "admin")
+            {
+                lastSort = -1;
+                return RedirectToAction("Index");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -166,9 +273,6 @@ namespace Group17_iCLOTHINGApp.Controllers
             return View(product);
         }
 
-        // POST: Departments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "productID,productName,productDescription,productPrice,productQty,categoryID,brandID")] Product product)
@@ -182,9 +286,16 @@ namespace Group17_iCLOTHINGApp.Controllers
             return View(product);
         }
 
+
         // GET: Departments/Delete/5
         public ActionResult Delete(string id)
         {
+            if (UserPasswordsController.CurrentUser() != "admin")
+            {
+                lastSort = -1;
+                return RedirectToAction("Index");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -206,6 +317,21 @@ namespace Group17_iCLOTHINGApp.Controllers
             db.Product.Remove(product);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        public ActionResult Details(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Product product = db.Product.Find(id);
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+            return View(product);
         }
 
         protected override void Dispose(bool disposing)

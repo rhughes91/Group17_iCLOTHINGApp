@@ -29,23 +29,15 @@ namespace Group17_iCLOTHINGApp.Controllers
         // GET: ShoppingCarts
         public ActionResult Index()
         {
-            var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);
-            return View(shoppingCart.ToList());
-        }
-
-        // GET: ShoppingCarts/Details/5
-        public ActionResult Details(string id)
-        {
-            if (id == null)
+            if (UserPasswordsController.Verified())//If the user is logged in
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);//show their stuff
+                return View(shoppingCart.ToList());
             }
-            ShoppingCart shoppingCart = db.ShoppingCart.Find(id);
-            if (shoppingCart == null)
+            else
             {
-                return HttpNotFound();
+                return View("~/Views/Home/Index.cshtml");
             }
-            return View(shoppingCart);
         }
 
         // GET: ShoppingCarts/Create
@@ -65,15 +57,18 @@ namespace Group17_iCLOTHINGApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (!UserPasswordsController.Verified()) return RedirectToAction("Index", "UserPasswords");
+
                 String userID = UserPasswordsController.CurrentUser();
-                shoppingCart.customerID = (from cus in db.Customer where cus.userID == userID select cus.customerID).First();
+                shoppingCart.customerID = db.Customer.FirstOrDefault(c => c.userID == userID)?.customerID;
                 shoppingCart.productPrice = db.Product.Find(shoppingCart.productID).productPrice;
                 shoppingCart.cartID = GenerateUniqueCartID().ToString();
+                shoppingCart.OrderID = null;
 
                 int productQuantity = shoppingCart.productQuantity;
                 if (db.Product.Find(shoppingCart.productID).productQty < productQuantity)
                 {
-                    ViewBag.ErrorMessage = "Not enough of this item in stock";//Get this error message working ModelState.AddModelError("ErrorMessageKey", "Error message goes here");
+                    ViewBag.ErrorMessage = "Not enough of this item in stock";
                 }
                 else
                 {

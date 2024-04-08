@@ -28,9 +28,9 @@ namespace Group17_iCLOTHINGApp.Models
         public string categoryID { get; set; }
         public string brandID { get; set; }
     
+        public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ShoppingCart> ShoppingCart { get; set; }
-        public virtual Brand Brand { get; set; }
     }
 }

@@ -1,60 +1,69 @@
 ﻿@model Group17_iCLOTHINGApp.Controllers.DepartmentsController.CatalogInformation
 
 @{
-	ViewBag.Title = "Index";
+    ViewBag.Title = "Filter";
 }
 
 <hr />
-<a href=@Url.Action("Index", "Departments", new {sort = 0})>@Html.DisplayName("Return To Catalog")</a>
+<a href=@Url.Action("Index", "Departments")>@Html.DisplayName("Return To Catalog")</a>
 @{var category = Model.categories[0]; Model.categories.RemoveAt(0);}
 
 <div class="row">
-	@foreach (var item in Model.departments)
-	{
-		<div class="col-md-3">
-			<h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
+    @foreach (var item in Model.departments)
+    {
+        <div class="col-md-3">
+            <h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
 
-			<h5>@Html.DisplayFor(catDisplay => category.categoryName)</h5>
+            <h5>@Html.DisplayFor(catDisplay => category.categoryName)</h5>
 
-			@foreach (var cat in Model.categories)
-			{
-				<a href=@Url.Action("Filter", "Departments", new {id = cat.categoryID })>@Html.DisplayFor(modelCategory => cat.categoryName)</a><br />
-			}
-		</div>
-	}
+            @foreach (var cat in Model.categories)
+            {
+                <a href=@Url.Action("Filter", "Departments", new {id = cat.categoryID })>@Html.DisplayFor(modelCategory => cat.categoryName)</a><br />
+            }
+        </div>
+    }
 </div>
 <hr />
-
+<form id="search_form" action="/Departments/Filter" method="Post">
+    @Html.AntiForgeryToken()
+    <div class="form-inline">
+        <input type="hidden" name="id" value=@category.categoryID class="form-control rounded">
+        <input type="text" placeholder="Search..." name="search" class="form-control rounded">
+        <button type="submit" class="btn btn-primary form-group">Submit</button>
+    </div>
+</form>
+<hr />
 <table class="table">
-	<tr>
-		<th>
-			<a href=@Url.Action("Filter", "Departments", new {id = category.categoryID, sort = 0})>@Html.DisplayName("Product Name")</a>
-		</th>
-		<th>
-			<a href=@Url.Action("Filter", "Departments", new {id = category.categoryID, sort = 1})>@Html.DisplayName("Brand")</a>
-		</th>
-		<th>
-			@Html.DisplayName("Description")
-		</th>
-		<th></th>
-	</tr>
+    <tr>
+        <th>
+            <a href=@Url.Action("Filter", "Departments", new {id = category.categoryID, sort = 0})>@Html.DisplayName("Product Name")</a>
+        </th>
+        <th>
+            <a href=@Url.Action("Filter", "Departments", new {id = category.categoryID, sort = 1})>@Html.DisplayName("Brand")</a>
+        </th>
+        <th>
+            <a href=@Url.Action("Filter", "Departments", new {id = category.categoryID, sort = 2})>@Html.DisplayName("Price")</a>
+        </th>
+        <th></th>
+    </tr>
 
-	@foreach (var item in Model.products)
-	{
-		var brandName = (from brand in Model.brands where item.brandID == brand.brandID select brand.brandName);
-		<tr>
-			<td>
-				@Html.DisplayFor(modelItem => item.productName)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => brandName)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.productDescription)
-			</td>
-			<td>
-				@Html.ActionLink("Details", "Details", new { id = item.productID })
-			</td>
-		</tr>
-	}
+    @foreach (var item in Model.products)
+    {
+        var brandName = (from brand in Model.brands where item.brandID == brand.brandID select brand.brandName);
+        var priceToCurrency = item.productPrice.ToString("C", System.Globalization.CultureInfo.CurrentCulture);
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.productName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => brandName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => priceToCurrency)
+            </td>
+            <td>
+                @Html.ActionLink("About", "Details", new { id = item.productID })
+            </td>
+        </tr>
+    }
 </table>

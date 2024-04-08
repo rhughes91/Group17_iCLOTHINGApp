@@ -1,8 +1,6 @@
 ﻿@model Group17_iCLOTHINGApp.Models.OrderStatus
 
-@{
-    ViewBag.Title = "Delete";
-}
+@{ ViewBag.Title = "Delete"; }
 
 <h2>Delete</h2>
 
@@ -35,22 +33,14 @@
             @Html.DisplayFor(model => model.Administrator.adminName)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ShoppingCart.productID)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ShoppingCart.productID)
-        </dd>
-
     </dl>
 
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+@Html.AntiForgeryToken()
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
-        </div>
-    }
+                <div class="form-actions no-color">
+                    <input type="submit" value="Delete" class="btn btn-default" /> |
+                    @Html.ActionLink("Back to List", "Index")
+                </div>}
 </div>

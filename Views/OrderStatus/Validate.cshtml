@@ -1,0 +1,65 @@
+﻿@model Group17_iCLOTHINGApp.Models.OrderStatus
+
+@{
+    ViewBag.Title = "Validate";
+}
+
+<h2>Details</h2>
+
+
+@Html.AntiForgeryToken()
+<div>
+    <h4>ShoppingCart</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.orderID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.orderID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.statusDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.statusDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+    </dl>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="Validate and Return to List" class="btn btn-default" id="saveAndBackBtn" />
+    </div>
+</div>
+
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#saveAndBackBtn').click(function () {
+                // Submit the form
+                $(this).closest('form').submit();
+
+                // Redirect to the Index page
+                window.location.href = '@Url.Action("Index", "OrderStatus")';
+            });
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}

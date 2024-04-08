@@ -210,8 +210,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Models\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Model1.Context.cs</LastGenOutput>
       <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.Context.cs</LastGenOutput>
     </Content>
     <Content Include="Models\Model1.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -253,18 +253,12 @@
     <Content Include="Views\UserPasswords\Index.cshtml" />
     <Content Include="Views\Departments\Create.cshtml" />
     <Content Include="Views\Departments\Delete.cshtml" />
-    <Content Include="Views\Departments\Details.cshtml" />
     <Content Include="Views\Departments\Edit.cshtml" />
     <Content Include="Views\Departments\Index.cshtml" />
     <Content Include="Views\UserQueries\Create.cshtml" />
-    <Content Include="Views\UserQueries\Delete.cshtml" />
-    <Content Include="Views\UserQueries\Details.cshtml" />
-    <Content Include="Views\UserQueries\Edit.cshtml" />
     <Content Include="Views\UserQueries\Index.cshtml" />
     <Content Include="Views\UserComments\Create.cshtml" />
     <Content Include="Views\UserComments\Delete.cshtml" />
-    <Content Include="Views\UserComments\Details.cshtml" />
-    <Content Include="Views\UserComments\Edit.cshtml" />
     <Content Include="Views\UserComments\Index.cshtml" />
     <Content Include="Views\Products\Create.cshtml" />
     <Content Include="Views\Products\Delete.cshtml" />
@@ -282,14 +276,16 @@
     <Content Include="Views\OrderStatus\Create.cshtml" />
     <Content Include="Views\OrderStatus\Delete.cshtml" />
     <Content Include="Views\OrderStatus\Details.cshtml" />
-    <Content Include="Views\OrderStatus\Edit.cshtml" />
+    <Content Include="Views\OrderStatus\Validate.cshtml" />
     <Content Include="Views\OrderStatus\Index.cshtml" />
-    <Content Include="Views\AboutUs\Create.cshtml" />
-    <Content Include="Views\AboutUs\Delete.cshtml" />
-    <Content Include="Views\AboutUs\Details.cshtml" />
-    <Content Include="Views\AboutUs\Edit.cshtml" />
     <Content Include="Views\AboutUs\Index.cshtml" />
     <Content Include="Views\ShoppingCarts\Checkout.cshtml" />
+    <Content Include="Views\UserPasswords\LoggedIn.cshtml" />
+    <Content Include="Views\Departments\AdminFilter.cshtml" />
+    <Content Include="Views\Departments\Details.cshtml" />
+    <Content Include="Views\AboutUs\Create.cshtml" />
+    <Content Include="Views\AboutUs\Delete.cshtml" />
+    <Content Include="Views\AboutUs\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
