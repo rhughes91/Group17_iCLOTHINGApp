@@ -17,6 +17,16 @@ namespace Group17_iCLOTHINGApp.Controllers
 
         private Group17_iCLOTHINGDBEntities db = new Group17_iCLOTHINGDBEntities();
 
+        private static readonly Random random = new Random();
+        public int GenerateUniqueCategoryID()
+        {
+            int id = random.Next(10000, 100000);
+
+            // Generate a random number within the range of 10000 to 99999
+            while (db.ShoppingCart.Find(id.ToString()) != null) id = random.Next(10000, 100000);
+            return id;
+        }
+
         public class CatalogInformation
         {
             public List<Department> departments { get; set; }
@@ -249,6 +259,34 @@ namespace Group17_iCLOTHINGApp.Controllers
             }
 
             return View(product);
+        }
+
+        // GET: Departments/Create
+        public ActionResult CreateCategory()
+        {
+            if (UserPasswordsController.CurrentUser() != "admin")
+            {
+                lastSort = -1;
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateCategory([Bind(Include = "categoryName,categoryDescription")] Category category, String depName, String parentName)
+        {
+            category.categoryID = GenerateUniqueCategoryID().ToString();
+            category.departmentID = (from dps in db.Department where dps.departmentName == depName select dps.departmentID).FirstOrDefault();
+            category.parentID = (from cats in db.Category where cats.categoryName == parentName select cats.categoryID).FirstOrDefault();
+            if (ModelState.IsValid && category.departmentID != null)
+            {
+                db.Category.Add(category);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(category);
         }
 
 

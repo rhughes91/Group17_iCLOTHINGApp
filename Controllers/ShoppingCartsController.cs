@@ -41,10 +41,20 @@ namespace Group17_iCLOTHINGApp.Controllers
         }
 
         // GET: ShoppingCarts/Create
-        public ActionResult Create()
+        public ActionResult Create(string id)
         {
             ViewBag.customerID = new SelectList(db.Customer, "customerID", "customerName");
-            ViewBag.productID = new SelectList(db.Product, "productID", "productName");
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Product product = db.Product.Find(id);
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.product = product;
             return View();
         }
 

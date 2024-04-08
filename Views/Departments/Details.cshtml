@@ -28,6 +28,7 @@
             @Html.DisplayFor(model => model.productDescription)
         </dd>
     </dl>
+    @Html.ActionLink("Add to Cart", "Create", "ShoppingCarts", new { id = Model.productID}, null)
 </div>
 <p>
     @Html.ActionLink("Back to List", "Index")

@@ -1,31 +1,30 @@
 ﻿@model Group17_iCLOTHINGApp.Controllers.DepartmentsController.CatalogInformation
 
 @{
-	ViewBag.Title = "Admin";
+    ViewBag.Title = "Admin";
 }
 
-<h2>Index</h2>
-
+<hr />
 <p>
-	@Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Add Category", "CreateCategory")
 </p>
-
+<hr />
 <hr />
 <div class="row">
-	@foreach (var item in Model.departments)
-	{
-		<div class="col-md-3">
-			<h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
+    @foreach (var item in Model.departments)
+    {
+        <div class="col-md-3">
+            <h4>@Html.DisplayFor(modelItem => item.departmentName)</h4>
 
-			@{var categories = from cat in Model.categories where cat.departmentID == item.departmentID select cat;}
+            @{var categories = from cat in Model.categories where cat.departmentID == item.departmentID select cat;}
 
-			@foreach (var category in categories)
-			{
-				<a href=@Url.Action("AdminFilter", "Departments", new {id = category.categoryID })>@Html.DisplayFor(modelCategory => category.categoryName)</a><br />
-			}
+            @foreach (var category in categories)
+            {
+                <a href=@Url.Action("AdminFilter", "Departments", new {id = category.categoryID })>@Html.DisplayFor(modelCategory => category.categoryName)</a><br />
+            }
 
-		</div>
-	}
+        </div>
+    }
 </div>
 <hr />
 <form id="search_form" action="/Departments/Admin" method="Post">
@@ -36,32 +35,35 @@
     </div>
 </form>
 <hr />
-
+<p>
+    @Html.ActionLink("Add Product", "Create")
+</p>
+<hr />
 <table class="table">
-	<tr>
-		<th>
-			<a href=@Url.Action("Admin", "Departments", new {srt = 0})>@Html.DisplayName("Product Name")</a>
-		</th>
-		<th>
-			<a href=@Url.Action("Admin", "Departments", new {srt = 1})>@Html.DisplayName("Brand")</a>
-		</th>
-		<th>
+    <tr>
+        <th>
+            <a href=@Url.Action("Admin", "Departments", new {srt = 0})>@Html.DisplayName("Product Name")</a>
+        </th>
+        <th>
+            <a href=@Url.Action("Admin", "Departments", new {srt = 1})>@Html.DisplayName("Brand")</a>
+        </th>
+        <th>
             <a href=@Url.Action("Admin", "Departments", new {srt = 2})>@Html.DisplayName("Price")</a>
-		</th>
-		<th></th>
-	</tr>
+        </th>
+        <th></th>
+    </tr>
 
-	@foreach (var item in Model.products)
+    @foreach (var item in Model.products)
     {
         var brandName = (from brand in Model.brands where item.brandID == brand.brandID select brand.brandName);
         var priceToCurrency = item.productPrice.ToString("C", System.Globalization.CultureInfo.CurrentCulture);
-		<tr>
-			<td>
-				@Html.DisplayFor(modelItem => item.productName)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => brandName)
-			</td>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.productName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => brandName)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => priceToCurrency)
             </td>
@@ -70,6 +72,6 @@
                 @Html.ActionLink("Edit", "Edit", new { id = item.productID }) |
                 @Html.ActionLink("Delete", "Delete", new { id = item.productID })
             </td>
-		</tr>
-	}
+        </tr>
+    }
 </table>
