@@ -90,7 +90,7 @@
           <Property Name="orderID" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="status" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="statusDate" Type="date" Nullable="false" />
-          <Property Name="adminID" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="adminID" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -168,7 +168,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Administrator_OrderStatus">
-          <End Role="Administrator" Type="Self.Administrator" Multiplicity="1" />
+          <End Role="Administrator" Type="Self.Administrator" Multiplicity="0..1" />
           <End Role="OrderStatus" Type="Self.OrderStatus" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Administrator">
@@ -524,7 +524,7 @@
           <Property Name="orderID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="statusDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="adminID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="adminID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Administrator" Relationship="Self.FK_Administrator_OrderStatus" FromRole="OrderStatus" ToRole="Administrator" />
           <NavigationProperty Name="ShoppingCart" Relationship="Self.FK_OrderStatus_OrderID" FromRole="OrderStatus" ToRole="ShoppingCart" />
         </EntityType>
@@ -615,7 +615,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Administrator_OrderStatus">
-          <End Role="Administrator" Type="Self.Administrator" Multiplicity="1" />
+          <End Role="Administrator" Type="Self.Administrator" Multiplicity="0..1" />
           <End Role="OrderStatus" Type="Self.OrderStatus" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Administrator">

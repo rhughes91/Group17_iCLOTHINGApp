@@ -42,7 +42,7 @@ namespace Group17_iCLOTHINGApp.Controllers
         }
 
         // GET: ShoppingCarts/Create
-        public ActionResult Create()
+        public ActionResult Create(string id)
         {
             if (!UserPasswordsController.Verified())
             {
@@ -54,7 +54,7 @@ namespace Group17_iCLOTHINGApp.Controllers
             }
 
             ViewBag.customerID = new SelectList(db.Customer, "customerID", "customerName");
-            ViewBag.productID = new SelectList(db.Product, "productID", "productName");
+            ViewBag.productID = new SelectList(db.Product, "productID", "productName", id);
             return View();
         }
 

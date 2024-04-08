@@ -122,7 +122,7 @@ namespace Group17_iCLOTHINGApp.Controllers
                 if (!canComplete) return View(orderStatus);
 
 
-                orderStatus.adminID = db.Administrator.FirstOrDefault().adminID;
+                orderStatus.adminID = null;
                 orderStatus.status = "Confirmed";
                 orderStatus.orderID = orderID;
                 orderStatus.statusDate = DateTime.Now;
