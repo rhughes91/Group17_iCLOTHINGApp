@@ -33,10 +33,6 @@ namespace Group17_iCLOTHINGApp.Controllers
             {
                 return RedirectToAction("Index", "UserPasswords");
             }
-            else if(UserPasswordsController.CurrentUser() == "admin")
-            {
-                return RedirectToAction("Index", "Home");
-            }
             var shoppingCart = db.ShoppingCart.Include(s => s.Customer).Include(s => s.Product);//show their stuff
             return View(shoppingCart.ToList());
         }
@@ -47,10 +43,6 @@ namespace Group17_iCLOTHINGApp.Controllers
             if (!UserPasswordsController.Verified())
             {
                 return RedirectToAction("Index", "UserPasswords");
-            }
-            else if (UserPasswordsController.CurrentUser() == "admin")
-            {
-                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.customerID = new SelectList(db.Customer, "customerID", "customerName");
