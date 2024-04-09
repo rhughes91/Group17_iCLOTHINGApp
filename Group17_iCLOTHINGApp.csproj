@@ -289,6 +289,9 @@
     <Content Include="Views\Departments\CreateCategory.cshtml" />
     <Content Include="Views\Departments\EditCategory.cshtml" />
     <Content Include="Views\UserQueries\Delete.cshtml" />
+    <Content Include="Views\UserPasswords\Create.cshtml" />
+    <Content Include="Views\UserPasswords\Edit.cshtml" />
+    <Content Include="Views\UserPasswords\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

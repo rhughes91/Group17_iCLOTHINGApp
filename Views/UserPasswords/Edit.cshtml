@@ -1,0 +1,90 @@
+﻿@model Group17_iCLOTHINGApp.Controllers.UserPasswordsController.Account
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.HiddenFor(model => model.customer.userID)
+    </div>
+    <div class="form-group">
+        @Html.HiddenFor(model => model.password)
+    </div>
+    <div class="form-group">
+        @Html.HiddenFor(model => model.customer.customerID)
+    </div>
+    <div class="form-group">
+        @Html.HiddenFor(model => model.customer.customerDOB)
+    </div>
+    <div class="form-group">
+        @Html.HiddenFor(model => model.customer.customerBillingAddress)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.customer.customerName, "Full Name", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.customer.customerName, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "name", @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.customer.customerName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.customer.customerGender, "Gender", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.customer.customerGender, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "gender", @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.customer.customerGender, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.customer.customerShippingAddress, "Shipping Address", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.customer.customerShippingAddress, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "shaddr", @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.customer.customerBillingAddress, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input id="submit-button" type="submit" value="Update" class="btn btn-primary" disabled />
+        </div>
+    </div>
+</div>
+
+    <script>
+		var nameCompleted = genderCompleted = false
+
+		function VerifyName() {
+			var name = document.getElementById("name").value
+
+			nameCompleted = (name != '')
+		}
+
+		function VerifyGender() {
+			var gender = document.getElementById("gender").value
+
+			genderCompleted = (gender != '')
+		}
+
+		function IsComplete() {
+			VerifyName()
+			VerifyGender()
+			document.getElementById("submit-button").disabled = !(nameCompleted && genderCompleted);
+		}
+    </script>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

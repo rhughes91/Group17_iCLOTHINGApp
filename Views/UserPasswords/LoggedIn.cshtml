@@ -1,88 +1,116 @@
 ﻿@model Group17_iCLOTHINGApp.Controllers.UserPasswordsController.Account
 
 @{
-	ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit";
 }
 
 @if (Model.customer != null)
 {
-	using (Html.BeginForm())
-	{
-		@Html.AntiForgeryToken()
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.customer.customerID)
-    @Html.HiddenFor(model => model.customer.customerDOB)
-    @Html.HiddenFor(model => model.customer.customerBillingAddress)
-    @Html.HiddenFor(model => model.customer.userID)
-    @Html.HiddenFor(model => model.password)
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.customer.customerID)
+            @Html.HiddenFor(model => model.customer.customerDOB)
+            @Html.HiddenFor(model => model.customer.customerBillingAddress)
+            @Html.HiddenFor(model => model.customer.userID)
+            @Html.HiddenFor(model => model.password)
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.customer.customerName, "Full Name", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.customer.customerName, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "name", @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.customer.customerName, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.customer.customerName, "Full Name", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.customer.customerName, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "name", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.customer.customerName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.customer.customerGender, "Gender", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.customer.customerGender, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "gender", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.customer.customerGender, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.customer.customerShippingAddress, "Shipping Address", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.customer.customerShippingAddress, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "saddr", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.customer.customerShippingAddress, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input id="submit-button" type="submit" value="Save" class="btn btn-primary" disabled />
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.customer.customerGender, "Gender", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.customer.customerGender, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "gender", @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.customer.customerGender, "", new { @class = "text-danger" })
-        </div>
-    </div>
+        <script>
+            var nameCompleted = genderCompleted = false
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.customer.customerShippingAddress, "Shipping Address", htmlAttributes: new { @style = "width: 10%;", @class = "control-label col-md-1" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.customer.customerShippingAddress, new { htmlAttributes = new { @oninput = "IsComplete()", @id = "saddr", @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.customer.customerShippingAddress, "", new { @class = "text-danger" })
-        </div>
-    </div>
+            function VerifyName() {
+                var name = document.getElementById("name").value
 
+                nameCompleted = (name != '')
+            }
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input id="submit-button" type="submit" value="Save" class="btn btn-primary" disabled />
-        </div>
-    </div>
-</div>
+            function VerifyGender() {
+                var gender = document.getElementById("gender").value
 
-		<script>
-			var nameCompleted = genderCompleted = false
+                genderCompleted = (gender != '')
+            }
 
-			function VerifyName() {
-				var name = document.getElementById("name").value
-
-				nameCompleted = (name != '')
-			}
-
-			function VerifyGender() {
-				var gender = document.getElementById("gender").value
-
-				genderCompleted = (gender != '')
-			}
-
-			function IsComplete() {
-				VerifyName()
-				VerifyGender()
-				document.getElementById("submit-button").disabled = !(nameCompleted && genderCompleted);
-			}
-		</script>
-	}
+            function IsComplete() {
+                VerifyName()
+                VerifyGender()
+                document.getElementById("submit-button").disabled = !(nameCompleted && genderCompleted);
+            }
+        </script>
+    }
 }
 else
 {
-	<hr />
+    <hr />
+    @Html.ActionLink("Create", "Create", null, new { @class = "btn btn-primary" })
+    <br /><br />
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayName("Username")
+            </th>
+            <th>
+                @Html.DisplayName("Full Name")
+            </th>
+        </tr>
+
+        @foreach (var item in ViewBag.accounts)
+        {
+            <tr>
+                <td>
+                    <p>@item.userID</p>
+                </td>
+                <td>
+                    <p>@item.customerName</p>
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.userID }, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.userID }, new { @class = "btn btn-primary" })
+                </td>
+            </tr>
+        }
+    </table>
 }
 <div>
-	@Html.ActionLink("Log Out", "Index", new { status = true })
+    @Html.ActionLink("Log Out", "Index", new { status = true })
 </div>
 
 @section Scripts {
-	@Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryval")
 }
 
